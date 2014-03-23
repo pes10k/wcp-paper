@@ -1,0 +1,101 @@
+Non Optimized
+===
+
+A (AND)
+w1 | w2 | w3 |      w1   | w2   | w3   | Aout
+--------------- -> -----------------------
+ 0 | 0  | 0  |      k1,0 | k2,0 | k3,0 | k3,0 XOR H(k1,0, k2,0, nonce_A)
+ 1 | 0  | 0  |      k1,1 | k2,0 | k3,0 | k3,0 XOR H(k1,1, k2,0, nonce_A)
+ 0 | 1  | 0  |      k1,0 | k2,1 | k3,0 | k3,0 XOR H(k1,0, k2,1, nonce_A)
+ 1 | 1  | 1  |      k1,1 | k2,1 | k3,1 | k3,1 XOR H(k1,1, k2,1, nonce_A)
+
+B (OR)
+w4 | w5 | w6 |      w4   | w5   | w6   | Bout
+--------------- -> -----------------------
+ 0 | 0  | 0  |      k4,0 | k5,0 | k6,0 | k6,0 XOR H(k4,0, k5,0, nonce_B)
+ 1 | 0  | 1  |      k4,1 | k5,0 | k6,1 | k6,1 XOR H(k4,1, k5,0, nonce_B)
+ 0 | 1  | 1  |      k4,0 | k5,1 | k6,1 | k6,1 XOR H(k4,0, k5,1, nonce_B)
+ 1 | 1  | 1  |      k4,1 | k5,1 | k6,1 | k6,1 XOR H(k4,1, k5,1, nonce_B)
+
+C (XOR)
+w3 | w6 | w7        w3   | w6   | w7   | Cout
+--------------- -> -------------------------
+ 0 | 0  | 0  |      k3,0 | w6,0 | w7,0 | k7,0 XOR H(k3,0, w6,0, nonce_C)
+ 1 | 0  | 1  |      k3,1 | w6,0 | w7,1 | k7,1 XOR H(k3,1, w6,0, nonce_C)
+ 0 | 1  | 1  |      k3,0 | w6,1 | w7,1 | k7,1 XOR H(k3,0, w6,1, nonce_C)
+ 1 | 1  | 0  |      k3,1 | w6,1 | w7,0 | k7,0 XOR H(k3,1, w6,1, nonce_C)
+
+
+
+
+
+Free XOR optimization
+===
+
+A (AND)
+w1 | w2 | w3 |      w1   | w2   | w3                   | Aout
+--------------- -> ------------------------------------------
+ 0 | 0  | 0  |      k1,0 | k2,0 | k3,0                 | k3,0 XOR H(k1,0, k2,0, nonce_A)
+ 1 | 0  | 0  |      k1,1 | k2,0 | k3,0                 | k3,0 XOR H(k1,1, k2,0, nonce_A)
+ 0 | 1  | 0  |      k1,0 | k2,1 | k3,0                 | k3,0 XOR H(k1,0, k2,1, nonce_A)
+ 1 | 1  | 1  |      k1,1 | k2,1 | k3,1 == (k3,0 XOR R) | k3,1 XOR H(k1,1, k2,1, nonce_A)
+
+B (OR)
+w4 | w5 | w6 |      w4   | w5   | w6                   | Bout
+--------------- -> ------------------------------------------
+ 0 | 0  | 0  |      k4,0 | k5,0 | k6,0                 | k6,0 XOR H(k4,0, k5,0, nonce_B)
+ 1 | 0  | 1  |      k4,1 | k5,0 | k6,1 == (k6,0 XOR R) | k6,1 XOR H(k4,1, k5,0, nonce_B)
+ 0 | 1  | 1  |      k4,0 | k5,1 | k6,1 == (k6,0 XOR R) | k6,1 XOR H(k4,0, k5,1, nonce_B)
+ 1 | 1  | 1  |      k4,1 | k5,1 | k6,1 == (k6,0 XOR R) | k6,1 XOR H(k4,1, k5,1, nonce_B)
+
+C (XOR)
+w3 | w6 | w7        w3   | w6   | w7
+--------------- -> -------------------------------------
+ 0 | 0  | 0  |      k3,0 | k6,0 | k3,0 XOR k6,0 | k3,0 XOR k6,0
+ 1 | 0  | 1  |      k3,1 | k6,0 | k3,1 XOR k6,0 | (k3,0 XOR R) XOR k6,0
+ 0 | 1  | 1  |      k3,0 | k6,1 | k3,0 XOR k6,1 | k3,0 XOR (k6,0 XOR R)
+ 1 | 1  | 0  |      k3,1 | k6,1 | k3,1 XOR k6,1 | (k3,0 XOR R) XOR (k6,0 XOR R) == k3,0 XOR w6,0
+
+
+GRR optimization
+===
+
+Free XOR optimization
+===
+
+A (AND)
+w1 | w2 | w3 |      w1   | w2   | w3                   | Aout
+--------------- -> ------------------------------------------
+ 0 | 0  | 0  |      k1,0 | k2,0 | k3,0                 | k3,0 XOR H(k1,0, k2,0, nonce_A)
+ 1 | 0  | 0  |      k1,1 | k2,0 | k3,0                 | k3,0 XOR H(k1,1, k2,0, nonce_A)
+ 0 | 1  | 0  |      k1,0 | k2,1 | k3,0                 | k3,0 XOR H(k1,0, k2,1, nonce_A)
+ 1 | 1  | 1  |      k1,1 | k2,1 | k3,1 == (k3,0 XOR R) | k3,1 XOR H(k1,1, k2,1, nonce_A)
+
+B (OR)
+w4 | w5 | w6 |      w4   | w5   | w6                   | Bout
+--------------- -> ------------------------------------------
+ 0 | 0  | 0  |      k4,0 | k5,0 | k6,0                 | k6,0 XOR H(k4,0, k5,0, nonce_B)
+ 1 | 0  | 1  |      k4,1 | k5,0 | k6,1 == (k6,0 XOR R) | k6,1 XOR H(k4,1, k5,0, nonce_B)
+ 0 | 1  | 1  |      k4,0 | k5,1 | k6,1 == (k6,0 XOR R) | k6,1 XOR H(k4,0, k5,1, nonce_B)
+ 1 | 1  | 1  |      k4,1 | k5,1 | k6,1 == (k6,0 XOR R) | k6,1 XOR H(k4,1, k5,1, nonce_B)
+
+D (AND) - pre optimization
+w3 | w6 | w7        w3   | w6   | w7   | Dout
+--------------- -> -------------------------------------
+ 0 | 0  | 0  |      k3,0 | k6,0 | k7,0 | k7,0 XOR H(k3,0, k6,0, nonce_D)
+ 1 | 0  | 1  |      k3,1 | k6,0 | k7,0 | k7,0 XOR H(k3,1, k6,0, nonce_D)
+ 0 | 1  | 1  |      k3,0 | k6,1 | k7,0 | k7,0 XOR H(k3,0, k6,1, nonce_D)
+ 1 | 1  | 0  |      k3,1 | k6,1 | k7,1 | k7,1 XOR H(k3,1, k6,1, nonce_D)
+
+D (AND) - pre optimization
+w3 | w6 | w7        w3   | w6   | w7   | Dout
+--------------- -> -------------------------------------
+ 0 | 0  | 0  |      k3,0 | k6,0 | k7,0 | H(k3,0, k6,0, nonce_D)
+ 1 | 0  | 1  |      k3,1 | k6,0 | k7,0 | k7,0 XOR H(k3,1, k6,0, nonce_D)
+ 0 | 1  | 1  |      k3,0 | k6,1 | k7,0 | k7,0 XOR H(k3,0, k6,1, nonce_D)
+ 1 | 1  | 0  |      k3,1 | k6,1 | k7,1 | k7,1 XOR H(k3,1, k6,1, nonce_D)
+
+
+
+
+

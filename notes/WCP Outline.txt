@@ -1,0 +1,52 @@
+1. Introduction
+    - goals of SFE
+    - Yao's protocol among others
+    - purpose of paper (provide overview of Yao's protocol and extensions to it)
+
+2. Security Definitions
+
+3. History of Garbled Circuits (brief)
+
+3. Yao's Garbled Circuits
+
+3.1 Description of Protocol
+
+    - Oblivious Transfer punt
+
+3.2 Security Characteristics
+
+3.3 Performance Characteristics
+
+4. Applications of Yao's Garbled Circuits
+
+5. Performance Extensions and Improvements
+
+5.1. Storing table indexes with keys
+
+5.2. Encryption function selection and requirements
+
+5.3. Circuit Optimization
+
+5.4. Free XOR
+
+5.5. Garbled Row Reduction
+
+6. Security Extensions and Improvemets
+
+6.1. Review of weaknesses in Original Protocol
+
+6.2. Cut-and-choose (Defense against malformed circuit)
+
+6.3. Majority Outcome (Defense against leaking bit from early abort)
+
+6.3. Commitment Sets (Defense against different, strategic inputs by constructor)
+
+7. Conclusion
+
+Appendix A:
+
+A.1. Reivew of role of Oblivous Transfer in protocol
+
+A.2. Simple, honest-but-curious approach
+
+A.3. Secure Approach

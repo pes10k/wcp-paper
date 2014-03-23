@@ -1,0 +1,131 @@
+1. Introduction
+    - What is SFE
+    - Different Approaches (specific, homomorphic, boolean circuit)
+        * Craig Gentry, Fully homomorphic encryption using ideal lattices
+            - Homomorphic encryption solution
+        * Huang, Evans, Katz, Private Set Intersection: Are Garbled Circuits Better than Custom Protocols?
+            - Custom protocols for SFE
+    - History of Yao's Protocol [ie Yao didn't mention himself]
+        * Yao, How to Generate and Exchange Secrets [1986]
+            - Describes general approach of how to design sfe protocols, more generally dealing with approaches for generating outputs that correspond to a given probability distribution (or set of probability distribtions)
+        * Foundations of Garbled Circuits [2012]
+    - purpose of paper (provide overview of Yao's protocol and extensions to it)
+    - Outline of paper
+
+2. Security Definitions
+    - Ideal Model
+        * Yao, How to Generate and Exchange Secrets [1986]
+        - modeling trusted computing third party in three ways
+            - validity (ie generate equally correct results in polynomial time)
+            - privacy (ie if both parties follow the protocol, then neither party learns about the others inputs)
+            - fairness (ie if one party cheats, they cannot get the right output while denying the other party the correct answer)
+    - Semi-Honest (Honest but Curious)
+        * Secure multi-party computation
+          Goldreich, Oded. "Secure multi-party computation." Manuscript. Preliminary version (1998).
+        - A protocol is secure under the Semi-Honest requirement then if it matches the Ideal model if all players follow the requirements of the protocol
+    - Malicious Model
+        * Secure multi-party computation
+          Goldreich, Oded. "Secure multi-party computation." Manuscript. Preliminary version (1998).
+
+3. Yao's Standard Protocol
+    - not defined by Yao in written form
+        * Foundations of Garbled Circuits [2012] which credits
+        * How to Play any Mental Game [1987] which credits
+        * Yao, How to Generate and Exchange Secrets [1986]
+
+        Terminology is slightly different from most recent literature, so the following description of the protocol uses the more common (but functionally equivilent) terminology used in sources like
+        * Hazay, Carmit, and Yehuda Lindell. "Efficient secure two-party protocols." Information Security and Cryptography. Springer, Heidelberg (2010), Chapter 3, section 3.1
+    - protocol definition
+    - efficiency analysis
+    - oblivious transfer punt
+
+4. Oblivious transfer
+    - Role in Yao in security extensions
+    - distinct concepts, but related (ie Yao relies on some Oblivious transfer method to function)
+        - 1-out-of-N
+        - Yao relies on special case 1-out-of-2
+    - First formalized by Rabin with an online protocol
+        * Rabin, How to Exchange Secrets with Oblivious Transfer [1981]
+    - Simple implementation (semi-honest)
+        * Mihir, Micali, Non-Interactive Oblivious Transfer and Applications
+
+5. Limitations of the Standard Protocol
+    - Security issues (not secure in Malicious model)
+        - Cheating in OT
+        - Cheating in circuit construction (sender could send malicious circuits)
+
+6. Security Improvements
+    6.0. Zero knowledge proofs
+        * How to Play any Mental Game [1987]
+        * FOUNDATIONS OF CRYPTOGRAPHY - http://www.wisdom.weizmann.ac.il/~oded/foc-book.html
+            - Discussion of how to provide a zero knoweldge proof that a given circuit is correct and executes as expected
+        * Mohassel, Franklin, Efficieny Tradeoffs for Malicous Two-Party Computation [2006]
+        * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+            - The zero-proof solution is interesting, but too inefficient for practical use so not discussed further
+    6.1. Securing Oblivious Transfer
+        * Moni, Pinkas, "Computationally Secure Oblivious Transfer" [2004]
+    6.2. Securing Circut: construction Cut-and-choose
+        * Malkhi, Nisan, Pinkas, Sella, "Fairplay - A Secure Two-Party Computation System"
+            - Sender (Bob) constructs multiple (m) circuits and commits to all inputs
+            - Reciever (Alice) chooses m-1 circuts and asks Bob to ungarble the circuits and his commitments to them.  Alice can then check that a) the circuits compute correctly, and b) that Bob has provided consistant inputs to all circuits
+            - Alice then proceeds with excuting the remaining circuit with the last set of bob's commitments, and the comitments Bob provides (using OT).  This reduces the risk of Bob successfully sneaking an incorrect circuit past Alice to 1/m
+    6.3. Further Securing Circut Selection using Cut-and-Choose
+        * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+        - Cut and choose is a step in the right direction, but reveals its own set of problems
+            - probabiltiy of Bob succedding in cheating can be reduced by Alice examining 1/2 of circuits, and then evaluating the remainder and taking the majority result, reducing the chance of Bob succeeding to 2^−0.311s for even modest values of s (ex 132).  This is because, in order to succeed, Bob must be lucky enough that none of his corrupted circuits appear in the 1/2 selected to be ungarbled, and more than half the remanining circuits must be corrupted.
+                * Yehuda Lindell, "Secure Two-Party Computation via Cut-and-Choose Oblivious Transfer" [2011]
+            - Securing this reveal-half method requires taking the majority result of the remaining, executed circuits.  The alternative, taking the result only if all circuits match in execution, allows for another exploit.
+                * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+    6.4. Ensuring Idential Inputs for All Evaluated Circuits Using Cut-and-Choose using Commitment Sets
+        * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+
+7. Performance Improvements
+    7.0. Security Implications of Hash / Encryption Function
+        * Pinkas, Schneider, Smart, Williams "Secure Two-Parry Computation is Practical" [2009]
+            - Correlation Robustness (if a encryption function is a random oracle different further optimizations are possible).
+    7.1. Circuit Optimizaitons
+        - Combine and Optimize Circuit Layout
+            * Kreuter, shelat, Shen, "Billion-Gate Secure Computation with Malicious Adversaries" [2012]
+                - Alter the circuit before garbling, to remove unused gates and groups of gates that can be more compatly expressed with fewer gates
+        - Free XOR
+            * Kolesnikov, Schneider "Improved Garbled Circuit: Free XOR Gates and Applications" [2008]
+            - Replace XOR gates in circuts (which have 4 gates) with a simple, single XOR operation by using a global random string equal to key size R, and selecting some inputs into the XOR function with the previous gate's key XORed to R
+        - Garbled Row Reduction
+            * Pinkas, Schneider, Smart, Williams "Secure Two-Parry Computation is Practical" [2009]
+            - Remove one entry in garbling tables from AND and OR gates by… (gotta figure this one out)
+    7.2. Communication Optimizations
+        - Random Seed Checking
+            * Goyal, Mohassel, Smith, "Efficient Two Party and Multiparty Computation against Covert Adversaries" [2008]
+            - Instead of randomly generating all keys, use a single random seed to generate them all, and then send then initial secret random seed and the hash of all the check circuts-circuts, to avoid needing to communicate large numbers of circuits
+    7.3. Execution Optimizations
+        Strategies that allow for a garbled circuit to be computed faster and / or with less memory
+        - Fast Table Lookups
+            * Huang, Evans, Katz, Malka, "Faster Secure Two-Party Computation Using Garbled Circuits" [2011]
+                - Proves the name of this solution
+            * Malkhi, Nisan, Pinkas, Sella, "Fairplay - A Secure Two-Party Computation System"
+                - First found implementation of this solution
+                - Instead of requiring the evaluator to try all rows of each table at each gate, the correct index in the next gate revealed by a given key is encrypted along with the key into that table
+        - Piplined Circuit Execution
+            * Huang, Evans, Katz, Malka, "Faster Secure Two-Party Computation Using Garbled Circuits" [2011]
+                - Processing can be speed up by having the receiver execute a circuit as the generator is executing in
+                - prevents generator from needing to store any entire circuits in memory
+            * Kreuter, shelat, Shen, "Billion-Gate Secure Computation with Malicious Adversaries" [2012]
+                - Technique could also be used allow for piplined circuit generation and execution, though only in the semi-honest model, since all circuts need to be completed and hashed before any cut and choose operations can be executed, and thus before any circuits can be executed.  Ie the Huang method does not work with the random seed strategy
+                - Extension of Huang et al aproach to allow for parallelized execution by having generator generate all circuits twice, before coin-toss / check-circuit selection to generate hash values, and afterwards to produce all circuits (for execution and checking)
+        - Working Set Optimization (?)
+            * Kreuter, shelat, Shen, "Billion-Gate Secure Computation with Malicious Adversaries" [2012]
+
+8. Implementations
+    - Fairplay
+    - Huang et al
+    - Kreuter, shelat, Shen
+
+
+
+9. Conclusion
+
+
+- Encryption function selection and requirements
+    - Don't need to use full enctyption scheme (like AES), can use a simple hash
+    - Function needs to provide a random looking mapping between input keys and output keys
+    - If Correlation Robustness (if a encryption function is a random oracle) we can do less hash operations (h(k1 || k2 || ))

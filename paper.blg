@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/MacPorts 2013_5)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: paper.aux
+The style file: abbrv-firstname-plainnat.bst
+Database file #1: combined.bib
+Warning--can't use both volume and number fields in huang2011faster
+You've used 6 entries,
+            2773 wiz_defined-function locations,
+            629 strings with 5704 characters,
+and the built_in function-call counts, 3130 in all, are:
+= -- 297
+> -- 129
+< -- 9
++ -- 45
+- -- 39
+* -- 217
+:= -- 443
+add.period$ -- 21
+call.type$ -- 6
+change.case$ -- 30
+chr.to.int$ -- 6
+cite$ -- 13
+duplicate$ -- 170
+empty$ -- 278
+format.name$ -- 45
+if$ -- 697
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 5
+newline$ -- 38
+num.names$ -- 24
+pop$ -- 75
+preamble$ -- 1
+purify$ -- 25
+quote$ -- 0
+skip$ -- 133
+stack$ -- 0
+substring$ -- 140
+swap$ -- 50
+text.length$ -- 6
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 66
+warning$ -- 1
+while$ -- 30
+width$ -- 0
+write$ -- 89
+(There was 1 warning)

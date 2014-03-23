@@ -1,0 +1,37 @@
+\section{Security Definitions}
+
+This section defines several security related terms that are used through out this paper.  The terminology is not identical throughout the literature, but have mappings onto similar, equivalent terms.
+
+\subsection{Ideal Model}
+
+Attempting to abstractly but precisely defining the characteristics of a \ac{SFE} protocol is difficult and can quickly devolve into a long enumeration of characteristics a \ac{SFE} system should \emph{not} do.  Instead, Yao suggests\cite{yao1986generate} that a correct system should be compared to an ideal-oracle that fulfills three properties, and that a \ac{SFE} system is correct if it performs identically to this imagined ideal-oracle.
+
+This imagined ideal-oracle takes \ac{f}, \ac{P1}'s input (\ponein) and \ac{P2}'s input (\ptwoin), executes the given function with the values provided, and then returns the function's output to both parties ($u \leftarrow f(i_{P1}, i_{P2})$).
+
+\subsubsection{Validity}
+
+A \ac{SFE} system must be able to correctly calculate the given function and produce the same conclusion or output that a non-secure version of the function would produce. Note that this does not guarantee a correct result, since the function being computed in a secure manner could itself have a logic error in it, nor does it guarantee to produce any answer, if one of the parties submits an invalid input to the computation. This \emph{validity} requirement merely requires that the function produce the same result as the insecure (or ``pre-secured'') version of the function being evaluated, given the same inputs.
+
+\subsubsection{Privacy}
+
+A \ac{SFE} system must protect the privacy of both parties inputs by ensuring that if \ac{P1} follows the protocol, \ac{P2} is not able to learn anything about \ptwoin\ beyond what \ac{P1} could learn by providing \ponein\ to the ideal oracle and examining \emph{u}.
+
+Note that that this definition of \emph{privacy} does not guarantee that \ac{P1} is not able to learn \ac{P2}'s input by examining the function's result (if the function being executed allows for such reverse engineering).  If, for example, the function being evaluated securely is multiplication, the fact that \ac{P1} can learn \ptwoin\ through $u/i_{P1}$ does not violate this \emph{privacy} property; it only shows that integer multiplication is not a function that makes sense in for two-party \ac{SFE}.
+
+\subsubsection{Fairness}
+
+
+2. Security Definitions
+    - Ideal Model
+        * Yao, How to Generate and Exchange Secrets [1986]
+        - modeling trusted computing third party in three ways
+            - validity (ie generate equally correct results in polynomial time)
+            - privacy (ie if both parties follow the protocol, then neither party learns about the others inputs)
+            - fairness (ie if one party cheats, they cannot get the right output while denying the other party the correct answer)
+    - Semi-Honest (Honest but Curious)
+        * Secure multi-party computation
+          Goldreich, Oded. "Secure multi-party computation." Manuscript. Preliminary version (1998).
+        - A protocol is secure under the Semi-Honest requirement then if it matches the Ideal model if all players follow the requirements of the protocol
+    - Malicious Model
+        * Secure multi-party computation
+          Goldreich, Oded. "Secure multi-party computation." Manuscript. Preliminary version (1998).

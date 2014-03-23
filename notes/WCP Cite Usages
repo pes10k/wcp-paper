@@ -1,0 +1,16 @@
+Oblivous Transfer
+    * Honest but curious
+        - Non-Interactive Oblivious Transfer and Applications
+
+Implementations and Applications
+    - Fairplay - A Secure Two-Party Computation System
+Optimizations
+    * Permuted-Encrpyted-Garbled-Truth-Table (ie store permutation in key) / Fast Table Lookups
+        - Fairplay - A Secure Two-Party Computation System
+Security
+
+Concepts
+    -
+
+History of Garbled Circuits
+    - Foundations of Garbled Circuits [2012]
