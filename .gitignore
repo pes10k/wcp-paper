@@ -1,2 +1,7 @@
+# Keep out intermediate latex nonsense
+*.blg
+*.log
+*.bbl
+
 papers/
 .DS_Store
