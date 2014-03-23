@@ -27,7 +27,17 @@
         * Secure multi-party computation
           Goldreich, Oded. "Secure multi-party computation." Manuscript. Preliminary version (1998).
 
-3. Yao's Standard Protocol
+3. Oblivious transfer
+    - Role in Yao in security extensions
+    - distinct concepts, but related (ie Yao relies on some Oblivious transfer method to function)
+        - 1-out-of-N
+        - Yao relies on special case 1-out-of-2
+    - First formalized by Rabin with an online protocol
+        * Rabin, How to Exchange Secrets with Oblivious Transfer [1981]
+    - Simple implementation (semi-honest)
+        * Mihir, Micali, Non-Interactive Oblivious Transfer and Applications
+
+4. Yao's Standard Protocol
     - not defined by Yao in written form
         * Foundations of Garbled Circuits [2012] which credits
         * How to Play any Mental Game [1987] which credits
@@ -38,16 +48,6 @@
     - protocol definition
     - efficiency analysis
     - oblivious transfer punt
-
-4. Oblivious transfer
-    - Role in Yao in security extensions
-    - distinct concepts, but related (ie Yao relies on some Oblivious transfer method to function)
-        - 1-out-of-N
-        - Yao relies on special case 1-out-of-2
-    - First formalized by Rabin with an online protocol
-        * Rabin, How to Exchange Secrets with Oblivious Transfer [1981]
-    - Simple implementation (semi-honest)
-        * Mihir, Micali, Non-Interactive Oblivious Transfer and Applications
 
 5. Limitations of the Standard Protocol
     - Security issues (not secure in Malicious model)

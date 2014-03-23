@@ -1,0 +1,48 @@
+\section{Oblivious Transfer}
+
+\ac{OT} refers to methods for two parties to exchange 1 of several values, with the sending party blinded to what value was selected, and the receiving party blinding to all other possible values that could have, but were not selected.
+
+While \ac{OT} and \ac{SFE} are approaches to distinct (though related) problems, understanding the Yao's \ac{GCP} and the security properties requires some understanding of \ac{OT} and how it is used in the protocol. Its a cryptographic primitive that serves as a building block that the security of Yao's \ac{GCP} relies on.
+
+This section provides a brief overview of the \ac{OT} problem, a simple protocol that provides a solution to the \ac{OT} problem against \emph{semi-honest} adversaries. The role of \ac{OT} in Yao's protocol is discussed in section 4.
+
+\subsection{Problem Definition}
+
+A general form of \ac{OT} is \emph{1-out-of-N oblivious transfer}, a two party protocol where \ac{P1}, the sending party, has a collection of values. \ac{P2} is able to select one of the values from this set to receive, but is not able to learn any of the other values.
+
+More formally, a \emph{1-out-of-N oblivious transfer} protocol takes as inputs a set of values \emph{N} from \ac{P1}, and \emph{i} form \ac{P2}, where
+$0 \leq i < |N|$. The protocol then outputs nothing to \ac{P1}, and $N_i$ to \ac{P2} in a manner that prevents \ac{P2} from learning another other values in \emph{N}.
+
+A special case of the above is the \emph{1-out-of-2 oblivious transfer} problem, where \emph{N} is fixed at 2.  Here \ac{P1} has just two values, and \ac{P2} is accordingly limited to $i \in \{0, 1\}$.  All versions of Yao's \ac{GCP} discussed in this paper rely on \emph{1-out-of-2 oblivious transfer} protocols.
+
+\subsection{Example 1-out-of-2 Protocol}
+
+The problem of \emph{1-out-of-2 \ac{OT}} was first addressed by Rabin\cite{rabin2005exchange} in 1981 using an online approach with multiple rounds of message passing, but was later adapted into an offline approaches using an techniques similar to the Diffie-Hellman key exchange protocol\cite{diffie1976new}.
+
+The following protocol\cite{lindell2013technion} is a very simple \emph{1-out-of-2 \ac{OT}} protocol that is secure against \emph{semi-honest}. It is included here to help in the next section's explanation of how the full \ac{GCP} works, and to provide a easy-to-understand example of \ac{OT} to build from later.
+
+\begin{framed}
+    \noindent\textbf{Semi-Honest 1-out-of-2 Oblivious Transfer}
+    \begin{enumerate}
+        \item \ac{P1} has a set of two strings, $S = \{s_0, s_1\}$.
+        \item \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether she wishes to learn the first or second value in \emph{S}.
+        \item \ac{P2} generates two pairs of public / private keys,\\
+        $(k^{pub}_0, k^{pri}_0), (k^{pub}_1, k^{pri}_1)$.
+        \item \ac{P2} then destroys $k^{pri}_{i-1}$, preventing her from recovering any information encrypted under $k^{pub}_{i-1}$.
+        \item \ac{P1} generates $c_0 = E_{k^{pub}_0}(s_0)$ and $c_1 = E_{k^{pub}_1}(s_1)$ and sends $c_0$ and $c_1$ to \ac{P2}.
+        \item \ac{P2} computes $s_i = D_{k^{pri}_i}(c_i)$.
+    \end{enumerate}
+\end{framed}
+
+Note that that as long as all parties follow the protocol, the protocol is secure by the \emph{semi-honest} definition. \ac{P2} is able to recover the desired string from \emph{S} but is not able to recover the other value from \emph{S}. Similarly, \ac{P1} does not know which value from \emph{S} \ac{P2} learned.
+
+% \cite{lindell2013technion}
+% 3. Oblivious transfer
+%     - Role in Yao in security extensions
+%     - distinct concepts, but related (ie Yao relies on some Oblivious transfer method to function)
+%         - 1-out-of-N
+%         - Yao relies on special case 1-out-of-2
+%     - First formalized by Rabin with an online protocol
+%         * Rabin, How to Exchange Secrets with Oblivious Transfer [1981]
+%     - Simple implementation (semi-honest)
+%         * Mihir, Micali, Non-Interactive Oblivious Transfer and Applications
