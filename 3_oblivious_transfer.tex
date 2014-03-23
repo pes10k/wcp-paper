@@ -21,28 +21,19 @@ The problem of \emph{1-out-of-2 \ac{OT}} was first addressed by Rabin\cite{rabin
 
 The following protocol\cite{lindell2013technion} is a very simple \emph{1-out-of-2 \ac{OT}} protocol that is secure against \emph{semi-honest}. It is included here to help in the next section's explanation of how the full \ac{GCP} works, and to provide a easy-to-understand example of \ac{OT} to build from later.
 
-\begin{framed}
-    \noindent\textbf{Semi-Honest 1-out-of-2 Oblivious Transfer}
-    \begin{enumerate}
-        \item \ac{P1} has a set of two strings, $S = \{s_0, s_1\}$.
-        \item \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether she wishes to learn the first or second value in \emph{S}.
-        \item \ac{P2} generates two pairs of public / private keys,\\
+\begin{algorithm}[H]
+    \floatname{algorithm}{Protocol}
+    \caption{Semi-Honest 1-out-of-2 Oblivious Transfer}
+    \label{alg:otsemihonest}
+    \begin{algorithmic}[1]
+        \STATE \ac{P1} has a set of two strings, $S = \{s_0, s_1\}$.
+        \STATE \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether she wishes to learn the $s_0$ or $s_1$.
+        \STATE \ac{P2} generates two pairs of public / private keys,\\
         $(k^{pub}_0, k^{pri}_0), (k^{pub}_1, k^{pri}_1)$.
-        \item \ac{P2} then destroys $k^{pri}_{i-1}$, preventing her from recovering any information encrypted under $k^{pub}_{i-1}$.
-        \item \ac{P1} generates $c_0 = E_{k^{pub}_0}(s_0)$ and $c_1 = E_{k^{pub}_1}(s_1)$ and sends $c_0$ and $c_1$ to \ac{P2}.
-        \item \ac{P2} computes $s_i = D_{k^{pri}_i}(c_i)$.
-    \end{enumerate}
-\end{framed}
+        \STATE \ac{P2} then destroys $k^{pri}_{i-1}$, preventing her from recovering any information encrypted under $k^{pub}_{i-1}$.
+        \STATE \ac{P1} generates $c_0 = E_{k^{pub}_0}(s_0)$ and $c_1 = E_{k^{pub}_1}(s_1)$ and sends $c_0$ and $c_1$ to \ac{P2}.
+        \STATE \ac{P2} computes $s_i = D_{k^{pri}_i}(c_i)$.
+    \end{algorithmic}
+\end{algorithm}
 
 Note that that as long as all parties follow the protocol, the protocol is secure by the \emph{semi-honest} definition. \ac{P2} is able to recover the desired string from \emph{S} but is not able to recover the other value from \emph{S}. Similarly, \ac{P1} does not know which value from \emph{S} \ac{P2} learned.
-
-% \cite{lindell2013technion}
-% 3. Oblivious transfer
-%     - Role in Yao in security extensions
-%     - distinct concepts, but related (ie Yao relies on some Oblivious transfer method to function)
-%         - 1-out-of-N
-%         - Yao relies on special case 1-out-of-2
-%     - First formalized by Rabin with an online protocol
-%         * Rabin, How to Exchange Secrets with Oblivious Transfer [1981]
-%     - Simple implementation (semi-honest)
-%         * Mihir, Micali, Non-Interactive Oblivious Transfer and Applications

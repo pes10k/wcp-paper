@@ -1,4 +1,5 @@
 # Keep out intermediate latex nonsense
+scratch.txt
 *.blg
 *.aux
 *.log
