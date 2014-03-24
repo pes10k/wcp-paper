@@ -3,13 +3,14 @@
 
 Yao's protocol is designed to provide \ac{SFE} against \emph{semi-honest} adversaries. These security guarantees do not carry over against \emph{malicious} adversaries though.  This is a serious shortcoming for being able to make the protocol practical; there are relatively few real-world scenarios where you do not trust the other party to see your inputs to a function, but do trust them to forgo the opportunity to discover those same inputs by deviating from the protocol.
 
-Much work has been conducted to extend Yao's protocol to be secure against \emph{malicious} adversaries.  This work can generally be classified into three areas, 1) creating \emph{1-out-of-2 \ac{OT}} protocols that are secure against \emph{malicious} adversaries, 2) ensuring that the circuit constructing party correctly constructs the garbled circuit, and 3) that the circuit executing party returns provides the value output by the circuit to the other party.
+Much work has been conducted to extend Yao's protocol to be secure against \emph{malicious} adversaries.  This work can generally be classified into three areas, 1) creating \emph{1-out-of-2 \ac{OT}} protocols that are secure against \emph{malicious} adversaries, 2) ensuring that the circuit constructing party correctly constructs the garbled circuit, and 3) preventing \ac{P1} from gaining an advantage by sending \ac{P2} corrupt values for her input.
 
 \subsection{Securing the \ac{OT} Protocol}
+\label{sec:securingot}
 
 The \emph{1-out-of-2 \ac{OT}} protocol described in the section \ref{sec:ot} is trivially vulnerable in the \emph{malicious} case.  Instead of generating $((k^{pub}_b, k^{pri}_b), (k^\bot_{b-1}, \bot))$, \ac{P2} could easily generate two valid public / private key pairs, allowing her to recover both values sent by \ac{P1}. Applied to Yao's protocol, this would allow \ac{P2} to learn both the garbled versions of the 0 and 1 values for all of her input bits. \ac{P2} having these additional keys would allow \ac{P2} to decrypt additional values throughout the circuit garbled gate, violating the \emph{privacy} requirement of \ac{SFE}.  Others have detailed several additional ways that using an insecure-in-the-\emph{malicious}-case, \ac{OT} protocol can be exploited by an attacker\cite{kiraz2006protocol}.
 
-As previously discussed, \ac{OT} is a distinct, though related, field to \ac{SFE} in general and Yao's protocol in particular.  As such, this section does not attempt to assess the state of the art of in the field of \ac{OT}.  A variety of other approaches to \emph{malicious}-case secure \emph{1-out-of-2 \ac{OT}} protocols exist\cite{naor2001efficient, kiraz2006protocol, goldreich1987play}, each with their own tradeoffs, computation cost and underlying security assumptions.  The below protocol\cite{bellare1990non}\footnote{This protocol is a slightly modified version of the protocol presented in \cite{bellare1990non}, to incorporate a change suggested by \cite{naor2001efficient} to remove the reliance on a external zero knowledge proof or other out-side-the-protocol source for \emph{C}.} is included to show that efficient \emph{1-out-of-2 \ac{OT}} is possible, and that researchers have used it and equivalent \ac{OT} protocols to make Yao's \ac{GCP} secure in the \emph{malicious} case.
+As previously discussed, \ac{OT} is a distinct, though related, field to \ac{SFE} in general and Yao's protocol in particular.  As such, this section does not attempt to assess the state of the art of in the field of \ac{OT}.  A variety of other approaches to \emph{malicious}-case secure \emph{1-out-of-2 \ac{OT}} protocols exist\cite{naor2001efficient, kiraz2006protocol, goldreich1987play, naor2005computationally}, each with their own tradeoffs, computation cost and underlying security assumptions.  The below protocol\cite{bellare1990non}\footnote{This protocol is a slightly modified version of the protocol presented in \cite{bellare1990non}, to incorporate a change suggested by \cite{naor2001efficient} to remove the reliance on a external zero knowledge proof or other out-side-the-protocol source for \emph{C}.} is included to show that efficient \emph{1-out-of-2 \ac{OT}} is possible, and that researchers have used it and equivalent \ac{OT} protocols to make Yao's \ac{GCP} secure in the \emph{malicious} case.
 
 \begin{algorithm}[H]
     \floatname{algorithm}{Protocol}
@@ -30,9 +31,16 @@ As previously discussed, \ac{OT} is a distinct, though related, field to \ac{SFE
     \end{algorithmic}
 \end{algorithm}
 
-Step 5 is not in mentioned in the original\cite{bellare1990non} statement of the protocol, but was added by the author to better explain how the protocol works. Here, note that \ac{P1} checks that $\beta_0 \bullet \beta_1 = C$ to prevent \ac{P2} from being able to decrypt under both $\beta_0$ and $\beta_1$, to force \ac{P2} to choose one or the other. As long as the assumption that \ac{P2} does not know the discrete log of $C$ holds, then it follows that \ac{P2} cannot know the discrete log of both $\beta_0$ and $\beta_1$.
+The purpose of many of the steps in the protocol are not explicit in the original work\cite{bellare1990non}, so some context is added here.  Specifically, in step 5 \ac{P1} checks that $\beta_0 \bullet \beta_1 = C$ to prevent \ac{P2} from being able to decrypt under both $\beta_0$ and $\beta_1$, to force \ac{P2} to choose one or the other. As long as the assumption that \ac{P2} does not know the discrete log of $C$ holds, then it follows that \ac{P2} cannot know the discrete log of both $\beta_0$ and $\beta_1$.
+
+% Similarly, steps 7, 8 and 9 function similarly to a Diffie-Hellman key exchange.  In step 8, it will either be the case that $z_0 = \beta^{y_0}_0
+%  = g^{{x_i}^{y_0}} = g^{x_i \bullet y_0}$ or $z_1 = \beta^{y_1}_1
+%  = g^{{x_i}^{y_1}} = g^{x_i \bullet y_1}$, depending on \ac{P2}'s choice for $i$. This allows \ac{P2} to generate either
+
+% in steps 7 and 8, note that either $a_0$ or $a_1$ will be equal to the \ac{P2} selected $\beta_i$.
 
 \subsection{Securing Circuit Construction}
+\label{sec:securingcircuits}
 
 A second way a malicious adversary could exploit Yao's protocol to learn information about the other party's input is by \ac{P1} creating and garbling a circuit for a function other than the function expected by \ac{P2}. Trivially, \ac{P1} could send \ac{P2} a garbled circuit couple simply send \ac{P2}'s input to \ac{P1}, or leak information about $i_{P2}$ in some other manner not known by \ac{P2}.  It is therefor necessary for \ac{P2} to ensure that the garbled circuit she computes is actually a garbled representation of the expected function.
 
@@ -48,22 +56,22 @@ Instead, recent work on Yao's protocol has focused on a \emph{cut-and-choose} st
 
 \noindent\textbf{Standard Cut-and-Choose}
 
-Under this approach, \ac{P1} constructs $m$ versions of the circuit, each structured the same but garbled so that the keys for each gate in the circuit are all unique. \ac{P1} does the same for his inputs to each of the garbled circuits. Additionally, \ac{P1} generates a commitment for each of his garbled inputs, which for simplicity can be represented by a simple hash function.\footnote{though several more secure methods of committing are mentioned in \cite{lindell2007efficient}, a simple hash function is used here to simplify the description of the cut-and-choose approach.  A more secure approach is described here \cite{halevi1996practical}},
+Under this approach, \ac{P1} constructs $m$ versions of the circuit, each structured the same but garbled so that the keys for each gate in the circuit are all unique. \ac{P1} does the same for his inputs to each of the garbled circuits. Additionally, \ac{P1} generates a commitment for each of his garbled inputs, which for simplicity can be represented by a simple hash function.\footnote{Tough several more secure methods of committing are mentioned in \cite{lindell2007efficient}, a simple hash function is used here to simplify the description of the cut-and-choose approach.  A more secure approach is described here \cite{halevi1996practical}},
 
 \ac{P1} then sends each of these pairs of garbled circuits and associated input commitments to \ac{P2}, who selects $m-1$ versions of the circuit to verify.  \ac{P1} de-garbles each of the $m-1$ selected circuits, so that \ac{P2} can see the underlying circuit with the obscured boolean values in each gates' computation table.  \ac{P2} can then verify that each of the revealed circuits is constructed correctly.
 
-If everything looks correct to \ac{P2} she will continue with the computation by receiving \ac{P1} garbled inputs, checking that they match the previously sent commitment (again, most simply thought of as checking that the hash of the received garbled inputs matches the previously sent hash), and then proceed with Yao's protocol as normal. This reduces the chances of \ac{P1} tricking \ac{P2} into computing a corrupted circuit to $1/m$. This protocol is provided more formally in Protocol \ref{alg:cutandchoose-basic}
+If everything looks correct to \ac{P2} she will continue with the computation by receiving \ac{P1} garbled inputs, checking that they match the previously sent commitment (again, most simply thought of as checking that the hash of the received garbled inputs matches the previously sent hash), and then proceed with Yao's protocol as normal. This reduces the chances of \ac{P1} tricking \ac{P2} into computing a corrupted circuit to $1/m$. This protocol is provided more formally in Protocol \ref{alg:cutandchoose-basic}.
 
 \begin{algorithm}[H]
     \floatname{algorithm}{Protocol}
     \caption{Securing Circuit Construction With Cut-and-Choose}
-    \label{alg:otmalicious}
+    \label{alg:cutandchoose-basic}
     \begin{algorithmic}[1]
         \STATE \ac{P1} generates $m$ garbled versions of the circuit $c$, along with a corresponding garbled version of his input, called $X_i$ for $0 \leq i < m$.
-        \STATE \ac{P1} uses hash function $H$ to generate commitments to each garbled input, $COMMIT_i = H(X_i) for 0 \leq i < m$.
+        \STATE \ac{P1} uses hash function $H$ to generate commitments to each garbled input, $COMMIT_i = H(X_i)$ for $0 \leq i < m$.
 
         \STATE \ac{P1} sends \ac{P2} $m$ garbled circuits and $COMMIT$ such that $|COMMIT| = m$.
-        \STATE \ac{P2} selects $0 \leq j < m$ and \ac{P1} un-garbles all circuits except $j$.
+        \STATE \ac{P2} selects $0 \leq j < m$ and \ac{P1} un-garbles all circuits except the $j$th.
         \STATE \ac{P2} inspects all $m-1$ circuits to check that they are correctly formed. If not, \ac{P2} aborts.
 
         \STATE \ac{P2} receives \ac{P1}'s garbled inputs to circuit $j$ and confirms that \ac{P1} did not change his inputs by verifying $COMMIT_j = H(X_j)$. If not, \ac{P2} aborts.
@@ -75,15 +83,42 @@ If everything looks correct to \ac{P2} she will continue with the computation by
 
 \noindent\textbf{Further Securing Cut-and-Choose}
 
-The above protocol gives \ac{P1} a $1/m$ chance of deceiving \ac{P2} into computing a corrupted version of the circuit.  However, the cut-and-choose technique can be improved, and the chances of \ac{P1} succeeding in this deception reduced exponentially by having \ac{P2} have \ac{P1} reveal only half of the $m$ circuits.  \ac{P2} then computes the remaining $m/2$ circuits and outputs the majority result of the remaining circuits.
+However, for many applications one may wish for a stronger guarantee against executing a malicious circuit from \ac{P1}.  Lindell and Pinkas\cite{lindell2007efficient} discovered that \ac{P1}'s odds of success can be dramatically reduced without the overhead of needing to generate additional circuits by altering the cut-and-choose strategy slightly.
+
+Instead of \ac{P2} having \ac{P1} reveal $m-1$ circuits, Lindell and Pinkas have \ac{P2} select only $m/2$ circuits to be revealed.  \ac{P2} computes the remaining $m/2$ circuits and takes the majority result. Under this construction, a malicious \ac{P1} would only succeed in having \ac{P2} output the result of a corrupt circuit if a) \ac{P1} constructed more than $1/4$ of the circuits to be corrupt, and b) none of those corrupt $m/4$ circuits were among the $m/2$ circuits \ac{P2} selected to be revealed.  Lindell and Pinkas measure \ac{P1}'s chance of success in such an attack at $2^{-0.311m}$, where $m$ is the number of circuits generated\cite{lindell2007efficient}.\\[.5em]
+
+\noindent\textbf{Majority Result as a Defense Against a Malicious Circuit}
+
+An immediate question that comes out of the above approach is why \ac{P2} should take the majority result of the computed $m/2$ circuits, instead of immediately aborting when encountering the first corrupt circuit, especially given that computing a garbled circuit is a very expensive operation.  The reason is that, were \ac{P2} to abort if all circuit outputs were not identical, she would become vulnerable to a different attack from \ac{P1}.
+
+Consider the case where \ac{P1} constructs all circuits correctly, with a single exception.  This corrupt circuit outputs the correct value of the function $\oplus$'ed with the first bit of \ac{P2}'s input.  By observing whether \ac{P2} finishes computing all still-garbled $m/2$ circuits, \ac{P1} is able to learn the first bit of \ac{P2}'s input.
+
+\begin{figure}[t]
+    \centering
+    \begin{tabular}{ c | c | c | c | l }
+        \hline
+        $f_0$ & $i_{P2_0}$ & $f_0 \oplus i_{P2_0}$ & \ac{P2} returns & \ac{P1} learns \\
+        \hline
+        0 & 0 & 0 & 0 & $i_{P2_0} = 0$\\
+        \hline
+        0 & 1 & 1 & $\bot$ & $i_{P2_0} = 1$\\
+        \hline
+        1 & 0 & 1 & 1 & $i_{P2_0} = 0$\\
+        \hline
+        1 & 1 & 0 & $\bot$ & $i_{P2_0} = 1$\\
+        \hline
+    \end{tabular}
+    \caption{Using a corrupted circuit to learn first bit of \ac{P2}'s input}
+    \label{fig:earlyabortattack}
+\end{figure}
+
+Figure \ref{fig:earlyabortattack} provides a full explanation of how \ac{P1} performs this attack.  The first column depicts the first bit of the correct value returned by $f$, and the second column shows the first bit of \ac{P2}'s input.  The third column shows the value returned by \ac{P1}'s single malicious circuit, and column four describes the value \ac{P2} returns from evaluating the entire $m/2$ set of circuits (or $\bot$ if \ac{P2} aborts).  Finally, column five shows what \ac{P1} is able to learn about \ac{P2}'s input, without having access to the first three columns of the table.
 
 
+\subsection{Securing Against Corrupt Inputs}
 
-% 6.3. Further Securing Circut Selection using Cut-and-Choose
-%     * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
-%     - Cut and choose is a step in the right direction, but reveals its own set of problems
-%         - probabiltiy of Bob succedding in cheating can be reduced by Alice examining 1/2 of circuits, and then evaluating the remainder and taking the majority result, reducing the chance of Bob succeeding to 2^−0.311s for even modest values of s (ex 132).  This is because, in order to succeed, Bob must be lucky enough that none of his corrupted circuits appear in the 1/2 selected to be ungarbled, and more than half the remanining circuits must be corrupted.
-%             * Yehuda Lindell, "Secure Two-Party Computation via Cut-and-Choose Oblivious Transfer" [2011]
-%         - Securing this reveal-half method requires taking the majority result of the remaining, executed circuits.  The alternative, taking the result only if all circuits match in execution, allows for another exploit.
-%             * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+A third area where a malicious party can exploit the original construction of Yao's protocol is in the values \ac{P1} chooses to return to \ac{P2} in the \emph{1-out-of-2 \ac{OT}} step.  Recall that this \ac{OT} step is taken to prevent \ac{P1} from learning whether \ac{P2} is requesting the garbled value for a 0 or a 1 bit in her input.  The protections given in the previous two subsections provide no security against this attack. Subsection \ref{sec:securingot} only addresses ensuring that \ac{P1} cannot learn \ac{P2}'s inputs during the \ac{OT} step, not that these inputs cannot be leaked elsewhere in the protocol.  Similarly, subsection \ref{sec:securingcircuits} provides \ac{P2} guarantees that the circuits being evaluated are not corrupt, but provides no guarantees against corrupt inputs.
 
+\ac{P1} can obtain information about \ac{P2}'s inputs by returning a corrupt value to \ac{P2} during the \ac{OT} step in the protocol.  \ac{P1} carries out the attack works as follows.  Instead of returning the correct garbled values for the 0 and 1 values of \ac{P2}'s input, \ac{P1} returns the correct garbled value for 0, and a corrupt value for 1.  \ac{P1} can then learn whether \ac{P2} received the 0 or 1 value by observing if \ac{P2} aborts while computing the circuit.  If \ac{P2} received the 0 value, she will be able to compute the circuit as normal.  However, if \ac{P2} received the 1 value, she will not be able to compute the circuit and will be forced to abort.  Either way, \ac{P1} is able to learn the value of a bit of \ac{P2}'s input.
+
+A defense against this attack was also given by Lindell and Pinkas\cite{lindell2007efficient}.  They secure the protocol by adding $s|i_{P2}|$ input bits to the circuit, where $s$ is a chosen security parameter.  Each of \ac{P2}'s input bits is replaced by an $\oplus$ing of $s$ new input bits, each chosen by \ac{P2} from \ac{P1} through the same \ac{OT} protocol.  The circuit is also augmented to reflect these new input bits and $\oplus$ gates. This step of indirection gives \ac{P2} $2^{s-1}$ ways to receive the each of her true input bits from \ac{P1}, and prevents \ac{P1} from learning the underlying input bit by corrupting the augmented, $\oplus$ed inputs.  Note that this construction does not prevent \ac{P1} from forcing \ac{P2} to abort when executing the circuit, it only prevents \ac{P1} from learning anything about \ac{P2}'s input.

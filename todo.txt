@@ -1,2 +1,3 @@
 1. Better understand secure OT example (why xors?)
-2. Explain random oracle assumption
+2. Further explan ways of constraining inputs from majority cut and choose
+3. Explaining ways of ensuring P2 shares w/ P1
