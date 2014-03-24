@@ -1,1 +1,2 @@
-better simple OT example
+1. better simple OT example
+2. Explain random oracle assumption

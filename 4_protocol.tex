@@ -1,6 +1,8 @@
 \section{Yao's Protocol}
 
-This section provides a complete description of Yao's \emph{garbled circuits protocol}, how the protocol incorporates \ac{OT}, and a discussion of the protocol's security and performance characteristics.  Though the protocol described here was first published by\cite{goldreich1987play}, the terminology used in this section follows more recent publications\cite{hazay2010efficient}. In all cases though the concepts are similar and there is a direct mapping between the two.
+This section provides a complete description of Yao's \emph{garbled circuits protocol} and how the protocol incorporates \ac{OT}.  Though the protocol described here was first published by\cite{goldreich1987play}, the terminology used in this section follows more recent publications\cite{hazay2010efficient}. In all cases though the concepts are similar and there is a direct mapping between the two.
+
+The protocol is presented twice, once i
 
 \begin{algorithm}[H]
     \floatname{algorithm}{Protocol}
@@ -14,7 +16,6 @@ This section provides a complete description of Yao's \emph{garbled circuits pro
         \STATE \ac{P2} calculates $c_g$ with the encrypted versions of $i_{P1}$ and $i_{P2}$ and outputs the result.
     \end{algorithmic}
 \end{algorithm}
-
 
 \subsection{Intuitive Description of the Protocol}
 
@@ -48,14 +49,154 @@ This section provides a more detailed explanation of how each step of Yao's prot
 The function \emph{f} being securely evaluated must first be converted into and equivalent boolean circuit $c$ so that $\forall x, y \in \{f(x, y) = c(x, y)\}$. The strategies for doing so are function specific, and thus is beyond the scope of the protocol.  For the purposes of this paper though, it is sufficient to note that there exists a mapping from any polynomial time function with fixed sized inputs to a boolean circuit that calculates the same output\cite{goldreich1987play}.
 
 
-\subsubsection{Garbling Each Gate's Truth Table}
+\subsubsection{Garbling Truth Tables}
 
 Once \ac{P1} has constructed the boolean circuit representation $c$ of $f$, the next step is to garble the truth table for each gate in $c$, or generating a garbled version of $c$ from the clear version of $c$ ($c_c \to c_g$).
 
-\begin{figure}[ht!,height=2in]% [width=4in]
-  \includegraphics[width=\columnwidth]{images/and_gate}
-  \caption{Garbling a single circuit}
-  \label{fig:garblecircuit}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{images/or_gate}
+    \caption{Garbling a single gate}
+    \label{fig:garblegateimg}
+
+    \subfloat[Original Values]{
+        \begin{tabular}{ c | c || c }
+            \hline
+            $w_0$ & $w_1$ & $w_2$ \\
+            \hline
+            0 & 0 & 0 \\
+            \hline
+            0 & 1 & 1 \\
+            \hline
+            1 & 0 & 1 \\
+            \hline
+            1 & 1 & 1 \\
+            \hline
+        \end{tabular}
+        \label{fig:gategarblepre}
+    }
+    \subfloat[Garbled Values]{
+        \begin{tabular}{ c | c || c || c }
+            \hline
+            $w_0$ & $w_1$ & $w_2$ & output value \\
+            \hline
+            $k^0_0$ & $k^0_1$ & $k^0_2$ & $E_{k^0_0}(E_{k^0_1}(k^0_2, g_1))$\\
+            \hline
+            $k^0_0$ & $k^1_1$ & $k^1_2$ & $E_{k^0_0}(E_{k^1_1}(k^1_2, g_1))$\\
+            \hline
+            $k^1_0$ & $k^0_1$ & $k^1_2$ & $E_{k^1_0}(E_{k^0_1}(k^1_2, g_1))$\\
+            \hline
+            $k^1_0$ & $k^1_1$ & $k^1_2$ & $E_{k^1_0}(E_{k^1_1}(k^1_2, g_1))$\\
+            \hline
+        \end{tabular}
+        \label{fig:gategarblepost}
+    }
+    \caption{Computation table for $g^{OR}_1$}
+    \label{fig:gategarble}
 \end{figure}
 
-To see how \ac{P1} does, this first, consider a single OR gate, $g_{OR}$
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=\columnwidth]{images/multi_gates}
+    \caption{Composing several gates into a Simple Circuit}
+    \label{fig:garblecircuitimg}
+    \subfloat[Original Values]{
+        \begin{tabular}{ c | c || c }
+            \hline
+            $w_3$ & $w_4$ & $w_5$ \\
+            \hline
+            0 & 0 & 0 \\
+            \hline
+            0 & 1 & 0 \\
+            \hline
+            1 & 0 & 0 \\
+            \hline
+            1 & 1 & 1 \\
+            \hline
+        \end{tabular}
+        \label{fig:andgatepre}
+    }
+    \subfloat[Garbled Values]{
+        \begin{tabular}{ c | c || c || c }
+            \hline
+            $w_3$ & $w_4$ & $w_5$ & output value \\
+            \hline
+            $k^0_3$ & $k^0_4$ & $k^0_5$ & $E_{k^0_3}(E_{k^0_4}(k^0_5, g_2))$\\
+            \hline
+            $k^0_3$ & $k^1_4$ & $k^0_5$ & $E_{k^0_3}(E_{k^1_4}(k^0_5, g_2))$\\
+            \hline
+            $k^1_3$ & $k^0_4$ & $k^0_5$ & $E_{k^1_3}(E_{k^0_4}(k^0_5, g_2))$\\
+            \hline
+            $k^1_3$ & $k^1_4$ & $k^1_5$ & $E_{k^1_3}(E_{k^1_4}(k^1_5, g_2))$\\
+            \hline
+        \end{tabular}
+        \label{fig:andgatepost}
+    }
+    \caption{Computation table for $g^{AND}_2$}
+    \label{fig:andgate}
+
+    \subfloat[Original Values]{
+        \begin{tabular}{ c | c || c }
+            \hline
+            $w_2$ & $w_5$ & $w_6$ \\
+            \hline
+            0 & 0 & 0 \\
+            \hline
+            0 & 1 & 1 \\
+            \hline
+            1 & 0 & 1 \\
+            \hline
+            1 & 1 & 0 \\
+            \hline
+        \end{tabular}
+        \label{fig:xorgatepre}
+    }
+    \subfloat[Garbled Values]{
+        \begin{tabular}{ c | c || c || c }
+            \hline
+            $w_2$ & $w_5$ & $w_6$ & output value \\
+            \hline
+            $k^0_2$ & $k^0_5$ & $k^0_6$ & $E_{k^0_2}(E_{k^0_5}(k^0_6, g_3))$\\
+            \hline
+            $k^0_2$ & $k^1_5$ & $k^1_6$ & $E_{k^0_2}(E_{k^1_5}(k^1_6, g_3))$\\
+            \hline
+            $k^1_2$ & $k^0_5$ & $k^1_6$ & $E_{k^1_2}(E_{k^0_5}(k^1_6, g_3))$\\
+            \hline
+            $k^1_2$ & $k^1_5$ & $k^0_6$ & $E_{k^1_2}(E_{k^1_5}(k^0_6, g_3))$\\
+            \hline
+        \end{tabular}
+        \label{fig:xorgatepost}
+    }
+    \caption{Computation table for $g^{XOR}_3$}
+    \label{fig:xorgate}
+\end{figure}
+
+To see how \ac{P1} does, this first, consider a single logical OR gate, $g^{OR}_1$, represented in figure \ref{fig:garblegate}. Initially \ac{P1} generates the values for this gate as normal, resulting in the truth table in figure \ref{fig:gategarblepre}. \ac{P1} then generates a key for each possible value for each wire in the gate.  This results in 6 keys being generated, for each of the two possible boolean values on each of the three wires in the gate.
+
+\ac{P1} then encrypts each entry in the table for the output wire under the keys used for the corresponding inputs.  The gate identifier serves as a nonce and is only included in this construction to to ensure that the same values are never encrypted twice in the circuit.
+
+This encryption plays two important roles in the protocol.  First, since the output of each encryption is assumed be random (i.e. the encryption function is assumed to perform like a random oracle), it removes any correlation between the underlying truth values in the table and the resulting garbled values. Even though this gate produces 3 identical boolean values, the garbled values all independently distributed, revealing nothing about the underlying value being masked.
+
+Second, encrypting the output keys under the input keys prevents \ac{P2}, the circuit evaluator, from playing with the circuit and considering other inputs other than those provided by \ac{P1}. \ac{P2} can only obtain one of the output keys from the table, since she will only have, at most, the necessary input keys to the gate to decrypt one value for the output wire.
+
+Once \ac{P1} has garbled the values for one gate, he can continue the process to compose an arbitrarily large circuit.  Figure \ref{fig:xorgate} shows how multiple garbled gates can be composed together into a simple circuit, and the how the keys from each gate are carried forward into the next gate, blinding the computing party from the learning the intermediate values being calculated.
+
+The only gates in the circuit that do not need to be garbled are the output gates, or gates who's wires do not serve as input wires to another gate.  The values from these gates can remain obscured since they are outputting the final result of the circuit, a value which \ac{P2} is allowed to learn.
+
+Finally, once all the gates in the circuit are garbled, \ac{P1} randomly permutes the order of each row in each table for each circuit, to further obscure the boolean values being input and output by each gate.
+
+\subsubsection{Sending Garbled Values to \ac{P2}}
+
+Once \ac{P1} has finished generating the garbled circuit, he then needs to garble his input to the function, creating a mapping of $i^0_{P1}$ to the garbled equivalents.  \ac{P1} begins this process by replacing the first bit of his input with the corresponding key for that input wire in the circuit.  For example, if in the circuit \ac{P1}'s first bit was input into $w_0$, and the value of $i^0_{P1}$ was 1, \ac{P1} would select $k^1_0$ to be the first value in his input to the garbled circuit. \ac{P1} then repeats this procedure for the remaining bits in his input, creating \ac{P1}'s garbled input. \ac{P1} then sends the garbled circuit $c_g$ and his garbled input to \ac{P2}.
+
+\subsubsection{Receiving \ac{P2}'s Input Values through \ac{OT}}
+
+\ac{P2} receives the $c_g$ and \ac{P1} garbled inputs, but still needs the garbled representations of her own inputs to compute the output of the circuit.Recall that \ac{P1} has the garbled values for all of \ac{P2}'s input wires, but has no knowledge of what values correspond to \ac{P2}'s true input.  \ac{P2}, inversely, knows the bits of her own input, but not the corresponding keys for the input wires into $c_g$.
+
+\ac{P2} maps the bits of her input into their corresponding garbled values by engaging in a series of \emph{1-out-of-2 \ac{OT}}s with \ac{P1}, where \ac{P1}'s inputs are $(k^0_0, k^1_0)$, and \ac{P2}'s input is 0 or 1, depending on the first bit of \ac{P2}'s input.  \ac{P2} the repeats the \ac{OT} for all values $0 < i < |i_{P2}|$ to achieve her full garbled input into $c_g$.
+
+\subsubsection{Computing the Garbled Circuit}
+
+Once \ac{P2} has both sets of garbled input values, and the garbled circuit, computing the final value is straight forward.  For each input gate, \ac{P2} looks up the corresponding value from \ac{P1} and \ac{P2}'s garbled input values and uses them as keys to decrypt the output value from the gate's garbled truth table.  Since \ac{P2} does not know which output key her two input keys correspond to, \ac{P2} must try to decrypt each of the four output keys.  If the protocol has been carried out correctly, only one of the four values will decrypt correctly.  The other three decryption attempts will produce $\bot$. The newly decrypted key then becomes an input key to the next gate.
+
+\ac{P2} continues this process until she reaches the output wires of the circuit.  Each of these wires output a single, unencrypted bit.  \ac{P2} then reassembles the output bits and has the correct solution for the \ac{f} encoded by $c_g$.  \ac{P2} completes the protocol by sending the output of the circuit to \ac{P1}.
