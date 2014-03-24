@@ -33,3 +33,26 @@ As previously discussed, \ac{OT} is a distinct, though related, field to \ac{SFE
 Step 5 is not in mentioned in the original\cite{bellare1990non} statement of the protocol, but was added by the author to better explain how the protocol works. Here, note that \ac{P1} checks that $\beta_0 \bullet \beta_1 = C$ to prevent \ac{P2} from being able to decrypt under both $\beta_0$ and $\beta_1$, to force \ac{P2} to choose one or the other. As long as the assumption that \ac{P2} does not know the discrete log of $C$ holds, then it follows that \ac{P2} cannot know the discrete log of both $\beta_0$ and $\beta_1$.
 
 \subsection{Securing Circuit Construction}
+
+A second way a malicious adversary could exploit Yao's protocol to learn information about the other party's input is by \ac{P1} creating and garbling a circuit for a function other than the function expected by \ac{P2}. Trivially, \ac{P1} could send \ac{P2} a garbled circuit couple simply send \ac{P2}'s input to \ac{P1}, or leak information about $i_{P2}$ in some other manner not known by \ac{P2}.  It is therefor necessary for \ac{P2} to ensure that the garbled circuit she computes is actually a garbled representation of the expected function.
+
+Two different general strategies for achieving this assurance have been promoted.  The first approach is that \ac{P1} generates a zero knowledge proof of the garbled circuit's correctness, and then sends this proof to \ac{P2} along with the garbled circuit and \ac{P1}'s garbled inputs\cite{goldreich1987play, goldreich2009foundations}.
+
+This zero-knowledge strategy dates back to earlier in this history of Yao's protocol, when the protocol was treated as proof that \ac{SFE} was possible, instead of as a practical tool for actually achieving \ac{SFE}. More recent, implementation-focused work on Yao's protocol has treated the zero-knowledge proof approaches as too expensive for practical use\cite{lindell2007efficient, mohassel2006efficiency}.
+
+Instead, recent work on Yao's protocol has focused on a \emph{cut-and-choose} strategy
+
+% 6.2. Securing Circut: construction Cut-and-choose
+%     * Malkhi, Nisan, Pinkas, Sella, "Fairplay - A Secure Two-Party Computation System"
+%         - Sender (Bob) constructs multiple (m) circuits and commits to all inputs
+%         - Reciever (Alice) chooses m-1 circuts and asks Bob to ungarble the circuits and his commitments to them.  Alice can then check that a) the circuits compute correctly, and b) that Bob has provided consistant inputs to all circuits
+%         - Alice then proceeds with excuting the remaining circuit with the last set of bob's commitments, and the comitments Bob provides (using OT).  This reduces the risk of Bob successfully sneaking an incorrect circuit past Alice to 1/m
+
+% 6.3. Further Securing Circut Selection using Cut-and-Choose
+%     * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+%     - Cut and choose is a step in the right direction, but reveals its own set of problems
+%         - probabiltiy of Bob succedding in cheating can be reduced by Alice examining 1/2 of circuits, and then evaluating the remainder and taking the majority result, reducing the chance of Bob succeeding to 2^−0.311s for even modest values of s (ex 132).  This is because, in order to succeed, Bob must be lucky enough that none of his corrupted circuits appear in the 1/2 selected to be ungarbled, and more than half the remanining circuits must be corrupted.
+%             * Yehuda Lindell, "Secure Two-Party Computation via Cut-and-Choose Oblivious Transfer" [2011]
+%         - Securing this reveal-half method requires taking the majority result of the remaining, executed circuits.  The alternative, taking the result only if all circuits match in execution, allows for another exploit.
+%             * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
+
