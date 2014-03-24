@@ -36,17 +36,48 @@ Step 5 is not in mentioned in the original\cite{bellare1990non} statement of the
 
 A second way a malicious adversary could exploit Yao's protocol to learn information about the other party's input is by \ac{P1} creating and garbling a circuit for a function other than the function expected by \ac{P2}. Trivially, \ac{P1} could send \ac{P2} a garbled circuit couple simply send \ac{P2}'s input to \ac{P1}, or leak information about $i_{P2}$ in some other manner not known by \ac{P2}.  It is therefor necessary for \ac{P2} to ensure that the garbled circuit she computes is actually a garbled representation of the expected function.
 
+\subsubsection{Zero-Knowledge Proofs}
+
 Two different general strategies for achieving this assurance have been promoted.  The first approach is that \ac{P1} generates a zero knowledge proof of the garbled circuit's correctness, and then sends this proof to \ac{P2} along with the garbled circuit and \ac{P1}'s garbled inputs\cite{goldreich1987play, goldreich2009foundations}.
 
-This zero-knowledge strategy dates back to earlier in this history of Yao's protocol, when the protocol was treated as proof that \ac{SFE} was possible, instead of as a practical tool for actually achieving \ac{SFE}. More recent, implementation-focused work on Yao's protocol has treated the zero-knowledge proof approaches as too expensive for practical use\cite{lindell2007efficient, mohassel2006efficiency}.
+This zero-knowledge strategy dates back to earlier in this history of Yao's protocol, when the protocol was treated as proof that \ac{SFE} was possible, instead of as a practical tool for actually achieving \ac{SFE}. More recent, implementation-focused work on Yao's protocol has treated the zero-knowledge proof approaches as too expensive for practical use\cite{lindell2007efficient, mohassel2006efficiency, malkhi2004fairplay}.
 
-Instead, recent work on Yao's protocol has focused on a \emph{cut-and-choose} strategy
+\subsubsection{Cut-and-Choose}
 
-% 6.2. Securing Circut: construction Cut-and-choose
-%     * Malkhi, Nisan, Pinkas, Sella, "Fairplay - A Secure Two-Party Computation System"
-%         - Sender (Bob) constructs multiple (m) circuits and commits to all inputs
-%         - Reciever (Alice) chooses m-1 circuts and asks Bob to ungarble the circuits and his commitments to them.  Alice can then check that a) the circuits compute correctly, and b) that Bob has provided consistant inputs to all circuits
-%         - Alice then proceeds with excuting the remaining circuit with the last set of bob's commitments, and the comitments Bob provides (using OT).  This reduces the risk of Bob successfully sneaking an incorrect circuit past Alice to 1/m
+Instead, recent work on Yao's protocol has focused on a \emph{cut-and-choose} strategy for securing circuit construction\cite{malkhi2004fairplay}. Work on this approach has developed in an arms-race fashion, with proposals being made, other researchers revealing shortcomings in the given strategy, and a new strategy being developed to address the given short coming. Several rounds of this propose-attack-revise cycle are discussed below, to give context and meaning to each proposed improvement.\\[.5em]
+
+\noindent\textbf{Standard Cut-and-Choose}
+
+Under this approach, \ac{P1} constructs $m$ versions of the circuit, each structured the same but garbled so that the keys for each gate in the circuit are all unique. \ac{P1} does the same for his inputs to each of the garbled circuits. Additionally, \ac{P1} generates a commitment for each of his garbled inputs, which for simplicity can be represented by a simple hash function.\footnote{though several more secure methods of committing are mentioned in \cite{lindell2007efficient}, a simple hash function is used here to simplify the description of the cut-and-choose approach.  A more secure approach is described here \cite{halevi1996practical}},
+
+\ac{P1} then sends each of these pairs of garbled circuits and associated input commitments to \ac{P2}, who selects $m-1$ versions of the circuit to verify.  \ac{P1} de-garbles each of the $m-1$ selected circuits, so that \ac{P2} can see the underlying circuit with the obscured boolean values in each gates' computation table.  \ac{P2} can then verify that each of the revealed circuits is constructed correctly.
+
+If everything looks correct to \ac{P2} she will continue with the computation by receiving \ac{P1} garbled inputs, checking that they match the previously sent commitment (again, most simply thought of as checking that the hash of the received garbled inputs matches the previously sent hash), and then proceed with Yao's protocol as normal. This reduces the chances of \ac{P1} tricking \ac{P2} into computing a corrupted circuit to $1/m$. This protocol is provided more formally in Protocol \ref{alg:cutandchoose-basic}
+
+\begin{algorithm}[H]
+    \floatname{algorithm}{Protocol}
+    \caption{Securing Circuit Construction With Cut-and-Choose}
+    \label{alg:otmalicious}
+    \begin{algorithmic}[1]
+        \STATE \ac{P1} generates $m$ garbled versions of the circuit $c$, along with a corresponding garbled version of his input, called $X_i$ for $0 \leq i < m$.
+        \STATE \ac{P1} uses hash function $H$ to generate commitments to each garbled input, $COMMIT_i = H(X_i) for 0 \leq i < m$.
+
+        \STATE \ac{P1} sends \ac{P2} $m$ garbled circuits and $COMMIT$ such that $|COMMIT| = m$.
+        \STATE \ac{P2} selects $0 \leq j < m$ and \ac{P1} un-garbles all circuits except $j$.
+        \STATE \ac{P2} inspects all $m-1$ circuits to check that they are correctly formed. If not, \ac{P2} aborts.
+
+        \STATE \ac{P2} receives \ac{P1}'s garbled inputs to circuit $j$ and confirms that \ac{P1} did not change his inputs by verifying $COMMIT_j = H(X_j)$. If not, \ac{P2} aborts.
+
+        \STATE Otherwise, \ac{P2} receives the continues with Yao's protocol as normal.
+    \end{algorithmic}
+\end{algorithm}
+
+
+\noindent\textbf{Further Securing Cut-and-Choose}
+
+The above protocol gives \ac{P1} a $1/m$ chance of deceiving \ac{P2} into computing a corrupted version of the circuit.  However, the cut-and-choose technique can be improved, and the chances of \ac{P1} succeeding in this deception reduced exponentially by having \ac{P2} have \ac{P1} reveal only half of the $m$ circuits.  \ac{P2} then computes the remaining $m/2$ circuits and outputs the majority result of the remaining circuits.
+
+
 
 % 6.3. Further Securing Circut Selection using Cut-and-Choose
 %     * Lindell, Pinkas, An Efficient Protocol For Secure Two-Party Computation in the Presence of Malicious Adversaries [2007]
