@@ -1,0 +1,35 @@
+\section{Protocol Security}
+\label{sec:security}
+
+Yao's protocol is designed to provide \ac{SFE} against \emph{semi-honest} adversaries. These security guarantees do not carry over against \emph{malicious} adversaries though.  This is a serious shortcoming for being able to make the protocol practical; there are relatively few real-world scenarios where you do not trust the other party to see your inputs to a function, but do trust them to forgo the opportunity to discover those same inputs by deviating from the protocol.
+
+Much work has been conducted to extend Yao's protocol to be secure against \emph{malicious} adversaries.  This work can generally be classified into three areas, 1) creating \emph{1-out-of-2 \ac{OT}} protocols that are secure against \emph{malicious} adversaries, 2) ensuring that the circuit constructing party correctly constructs the garbled circuit, and 3) that the circuit executing party returns provides the value output by the circuit to the other party.
+
+\subsection{Securing the \ac{OT} Protocol}
+
+The \emph{1-out-of-2 \ac{OT}} protocol described in the section \ref{sec:ot} is trivially vulnerable in the \emph{malicious} case.  Instead of generating $((k^{pub}_b, k^{pri}_b), (k^\bot_{b-1}, \bot))$, \ac{P2} could easily generate two valid public / private key pairs, allowing her to recover both values sent by \ac{P1}. Applied to Yao's protocol, this would allow \ac{P2} to learn both the garbled versions of the 0 and 1 values for all of her input bits. \ac{P2} having these additional keys would allow \ac{P2} to decrypt additional values throughout the circuit garbled gate, violating the \emph{privacy} requirement of \ac{SFE}.  Others have detailed several additional ways that using an insecure-in-the-\emph{malicious}-case, \ac{OT} protocol can be exploited by an attacker\cite{kiraz2006protocol}.
+
+As previously discussed, \ac{OT} is a distinct, though related, field to \ac{SFE} in general and Yao's protocol in particular.  As such, this section does not attempt to assess the state of the art of in the field of \ac{OT}.  A variety of other approaches to \emph{malicious}-case secure \emph{1-out-of-2 \ac{OT}} protocols exist\cite{naor2001efficient, kiraz2006protocol, goldreich1987play}, each with their own tradeoffs, computation cost and underlying security assumptions.  The below protocol\cite{bellare1990non}\footnote{This protocol is a slightly modified version of the protocol presented in \cite{bellare1990non}, to incorporate a change suggested by \cite{naor2001efficient} to remove the reliance on a external zero knowledge proof or other out-side-the-protocol source for \emph{C}.} is included to show that efficient \emph{1-out-of-2 \ac{OT}} is possible, and that researchers have used it and equivalent \ac{OT} protocols to make Yao's \ac{GCP} secure in the \emph{malicious} case.
+
+\begin{algorithm}[H]
+    \floatname{algorithm}{Protocol}
+    \caption{Malicious-Secure 1-out-of-2 Oblivious Transfer}
+    \label{alg:otmalicious}
+    \begin{algorithmic}[1]
+        \STATE \ac{P1} has a set of two strings, $S = \{s_0, s_1\}$.
+        \STATE \ac{P1} (sender) and \ac{P2} (receiver) agree on some $q$ and $g$ such that $g$ is a generator for $\mathbb{Z}^*_q$.
+        \STATE \ac{P1} selects a random $C$ from $\mathbb{Z}^*_q$, or more generally such that \ac{P2} does not know the discrete log of $C$ in $\mathbb{Z}^*_q$.
+        \STATE \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether \ac{P2} wants $s_0$ or $s_1$. \ac{P2} also selects a random $0 \leq x_i \leq q-2$.
+        \STATE \ac{P2} sets $\beta_i = g^{x_i}$ and $\beta_{i-1} = C \bullet (g^{x_i})^-1$. $(\beta_0, \beta_1)$ and $(i, x_i)$ form \ac{P1} public and private keys, respectively.
+
+        \STATE \ac{P1} checks the validity of \ac{P2}'s public keys by verifying that $\beta_0 \bullet \beta_1 = C$.  If not, \ac{P1} aborts.
+
+        \STATE \ac{P1} selects $y_0, y_1$ such that $0 \leq y_0, y_1 \leq q-2$, and sends \ac{P2} $a_0 = g^{y_0}, a_1 = g^{y_1}$.
+        \STATE \ac{P1} also generates $z_0 = \beta^{y_0}_0, z_1 = \beta^{y_1}_1$ and sends \ac{P2} $r_0 = s_0 \oplus z_0$ and $r_1 = s_1 \oplus z_1$.
+        \STATE \ac{P2} computes $z_i = a^{xi}_i$ and then receives $s_i$ by computing $s_i = z_i \oplus r_i$.
+    \end{algorithmic}
+\end{algorithm}
+
+Step 5 is not in mentioned in the original\cite{bellare1990non} statement of the protocol, but was added by the author to better explain how the protocol works. Here, note that \ac{P1} checks that $\beta_0 \bullet \beta_1 = C$ to prevent \ac{P2} from being able to decrypt under both $\beta_0$ and $\beta_1$, to force \ac{P2} to choose one or the other. As long as the assumption that \ac{P2} does not know the discrete log of $C$ holds, then it follows that \ac{P2} cannot know the discrete log of both $\beta_0$ and $\beta_1$.
+
+\subsection{Securing Circuit Construction}

@@ -1,2 +1,2 @@
-1. better simple OT example
+1. Better understand secure OT example (why xors?)
 2. Explain random oracle assumption

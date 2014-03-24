@@ -1,8 +1,9 @@
 \section{Yao's Protocol}
+\label{sec:protocol}
 
 This section provides a complete description of Yao's \emph{garbled circuits protocol} and how the protocol incorporates \ac{OT}.  Though the protocol described here was first published by\cite{goldreich1987play}, the terminology used in this section follows more recent publications\cite{hazay2010efficient}. In all cases though the concepts are similar and there is a direct mapping between the two.
 
-The protocol is presented twice, once i
+The protocol is presented twice, once in a less formal format that includes explanations of why the protocol requires each step, and a second time more formally, fully describing each step taken by both parties. The former section is intended to make the latter section either to follow.
 
 \begin{algorithm}[H]
     \floatname{algorithm}{Protocol}
@@ -12,7 +13,7 @@ The protocol is presented twice, once i
         \STATE \ac{P1} : generates a boolean circuit representation $c_c$ of \ac{f} that takes input $i_{P1}$ from \ac{P1} and $i_{P2}$ from \ac{P2}.
         \STATE \ac{P1} transforms $c_c$ by garbling each gate's computation table, creating garbled circuit $c_g$.
         \STATE \ac{P1} sends both $c_g$ and the values for the input wires in $c_g$ corresponding to $i_{P1}$ to \ac{P2}.
-        \STATE \ac{P2} uses \emph{1-out-of-2 \ac{OT}} to receive from \ac{P1} the encrypted values for $i_{P2}$ to $c_g$.
+        \STATE \ac{P2} uses \emph{1-out-of-2 \ac{OT}} to receive from \ac{P1} the garbled values for $i_{P2}$ to $c_g$.
         \STATE \ac{P2} calculates $c_g$ with the encrypted versions of $i_{P1}$ and $i_{P2}$ and outputs the result.
     \end{algorithmic}
 \end{algorithm}
@@ -21,7 +22,7 @@ The protocol is presented twice, once i
 
 This section attempts to provide a high level explanation of how Yao's protocol works and some of the reasoning behind its construction. It is included to make the following detailed description of the protocol easier to follow.
 
-\ac{P1} and \ac{P2} wish to compute function \emph{f} securely, so that their inputs to the function remain secret. They will do so by modeling \emph{f} as a boolean circuit. \ac{P1} will then ``garble'' the circuit by replacing all boolean values in the circuit with pseudo-random looking strings, and then keeping secret the mapping between these strings and the underlying boolean values. This is done for all gates in the circuit except for the output gates of the circuit.  The values of the output wires for these gates are left un-garbled.
+\ac{P1} and \ac{P2} wish to compute function \emph{f} securely, so that their inputs to the function remain secret. They will do so by modeling \emph{f} as a boolean circuit. \ac{P1} will then ``garble'' the circuit by replacing all boolean values in the circuit with pseudo-random looking strings, and then keeping the mapping secret. This is done for all gates in the circuit except for the output gates of the circuit.  The values of the output wires for these gates are left un-garbled.
 
 \ac{P1} will then similarly replace each bit of his input with the pseudo-random string that maps to that bit's input into the circuit. \ac{P1} then sends the garbled circuit and the strings corresponding to his input bits to \ac{P2}.
 
@@ -34,7 +35,7 @@ Once \ac{P2} has received all of the strings corresponding to her input into the
 
 \ac{P2} then begins to compute the circuit by entering the pseudo-random strings that correspond to each bit of her and \ac{P1}'s input into each corresponding input gate and using the resulting string as the input to the next gate. \ac{P2} may try to learn information about \ac{P1}'s inputs by watching the execution of the circuit. The protocol prevents \ac{P2} from doing so though the manner that each computation table for each gate was constructed.
 
-Recall that the computation table for every gate in the circuit was constructed so that each pair of inputs produces a output string that represents the correct boolean result, but which appears pseudo-random to \ac{P2}.  In other words, instead of mapping from $\{0, 1\} x \{0, 1\} \to \{0, 1\}$, all gates in the circuit map from two random looking strings to another uniformly distributed pseudo-random string. Since \ac{P2} never learns the mapping between strings used in the table and their underlying boolean values, \ac{P2} learns nothing by watching the outputs of each gate.
+Recall that the computation table for every gate in the circuit was constructed so that each pair of inputs produces a output string that represents the correct boolean result, but which appears pseudo-random to \ac{P2}.  In other words, instead of mapping from $\{0, 1\} \times \{0, 1\} \to \{0, 1\}$, all gates in the circuit become a function mapping two random looking strings to another uniformly distributed pseudo-random string, or $f(\{0, 1\}^{|k|}, \{0, 1\}^{|k|}) \to \{0, 1\}^{|k|}$, where $|k|$ is the key size of the of the encryption function. Since \ac{P2} never learns the mapping between strings used in the table and their underlying boolean values, \ac{P2} learns nothing by watching the outputs of each gate.
 
 Recall that the output values of the output gates in the circuit are not masked. This results in \ac{P2} learning the value of $f(i_{P1}, i_{P2})$ once the computation has finished.  \ac{P2} then shares this computed value with \ac{P1}.
 
@@ -187,7 +188,7 @@ Finally, once all the gates in the circuit are garbled, \ac{P1} randomly permute
 
 \subsubsection{Sending Garbled Values to \ac{P2}}
 
-Once \ac{P1} has finished generating the garbled circuit, he then needs to garble his input to the function, creating a mapping of $i^0_{P1}$ to the garbled equivalents.  \ac{P1} begins this process by replacing the first bit of his input with the corresponding key for that input wire in the circuit.  For example, if in the circuit \ac{P1}'s first bit was input into $w_0$, and the value of $i^0_{P1}$ was 1, \ac{P1} would select $k^1_0$ to be the first value in his input to the garbled circuit. \ac{P1} then repeats this procedure for the remaining bits in his input, creating \ac{P1}'s garbled input. \ac{P1} then sends the garbled circuit $c_g$ and his garbled input to \ac{P2}.
+Once \ac{P1} has finished generating the garbled circuit, he then needs to garble his input to the function, creating a mapping of $i_{P1}$ to the garbled equivalents.  \ac{P1} begins this process by replacing the first bit of his input with the corresponding key for that input wire in the circuit.  For example, if in the circuit \ac{P1}'s first bit was input into $w_0$, and the value of $i^0_{P1}$ was 1, \ac{P1} would select $k^1_0$ to be the first value in his input to the garbled circuit. \ac{P1} then repeats this procedure for the remaining bits in his input, creating \ac{P1}'s garbled input. \ac{P1} then sends the garbled circuit $c_g$ and his garbled input to \ac{P2}.
 
 \subsubsection{Receiving \ac{P2}'s Input Values through \ac{OT}}
 

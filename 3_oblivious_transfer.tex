@@ -1,6 +1,7 @@
 \section{Oblivious Transfer}
+\label{sec:ot}
 
-\ac{OT} refers to methods for two parties to exchange 1 of several values, with the sending party blinded to what value was selected, and the receiving party blinding to all other possible values that could have, but were not selected.
+\ac{OT} refers to methods for two parties to exchange 1 of several values, with the sending party blinded to what value was selected, and the receiving party blinding to all other possible values that could have, but were not, selected.
 
 While \ac{OT} and \ac{SFE} are approaches to distinct (though related) problems, understanding the Yao's \ac{GCP} and the security properties requires some understanding of \ac{OT} and how it is used in the protocol. Its a cryptographic primitive that serves as a building block that the security of Yao's \ac{GCP} relies on.
 
@@ -27,13 +28,12 @@ The following protocol\cite{lindell2013technion} is a very simple \emph{1-out-of
     \label{alg:otsemihonest}
     \begin{algorithmic}[1]
         \STATE \ac{P1} has a set of two strings, $S = \{s_0, s_1\}$.
-        \STATE \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether she wishes to learn the $s_0$ or $s_1$.
-        \STATE \ac{P2} generates two pairs of public / private keys,\\
-        $(k^{pub}_0, k^{pri}_0), (k^{pub}_1, k^{pri}_1)$.
-        \STATE \ac{P2} then destroys $k^{pri}_{i-1}$, preventing her from recovering any information encrypted under $k^{pub}_{i-1}$.
+        \STATE \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether she wishes to learn $s_0$ or $s_1$.
+        \STATE \ac{P2} generates a public / private key pair $(k^{pub}, k^{pri})$, along with a second value $k^\bot$ that externally appears to be public key, but for which \ac{P2} has no corresponding private key to decrypt with.
+        \STATE \ac{P2} then advertises both public keys as $k^{pub}_0, k^{pub}_1$, and sets $k^{pub}_i = k^{pub}$ and $k^{pub}_{i-1} = k^\bot$.
         \STATE \ac{P1} generates $c_0 = E_{k^{pub}_0}(s_0)$ and $c_1 = E_{k^{pub}_1}(s_1)$ and sends $c_0$ and $c_1$ to \ac{P2}.
-        \STATE \ac{P2} computes $s_i = D_{k^{pri}_i}(c_i)$.
+        \STATE \ac{P2} computes $s_i = D_{k^{pri}}(c_i)$.
     \end{algorithmic}
 \end{algorithm}
 
-Note that that as long as all parties follow the protocol, the protocol is secure by the \emph{semi-honest} definition. \ac{P2} is able to recover the desired string from \emph{S} but is not able to recover the other value from \emph{S}. Similarly, \ac{P1} does not know which value from \emph{S} \ac{P2} learned.
+Note that the protocol is secure by the \emph{semi-honest} definition. As long as all parties do not deviate from the protocol, \ac{P2} is able to recover the desired string from \emph{S} but is not able to recover the other value from \emph{S}. Similarly, \ac{P1} does not know which value from \emph{S} \ac{P2} learned.

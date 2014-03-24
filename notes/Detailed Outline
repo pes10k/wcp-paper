@@ -53,6 +53,7 @@
     - Security issues (not secure in Malicious model)
         - Cheating in OT
         - Cheating in circuit construction (sender could send malicious circuits)
+        - Ensuring that P2 reveals the circuits output to P1
 
 6. Security Improvements
     6.0. Zero knowledge proofs
