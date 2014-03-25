@@ -3,13 +3,13 @@
 
 \ac{OT} refers to methods for two parties to exchange one-out-of-several values, with the sending party blinded to what value was selected, and the receiving party blinded to all other possible values that could have, but were not, selected.
 
-While \ac{OT} and \ac{SFE} are approaches to distinct (though related) problems, understanding Yao's \ac{GCP} and its security properties requires some understanding of \ac{OT}. Its a cryptographic primitive and a building block that Yao's \ac{GCP} builds on.  This section provides a brief overview of the \ac{OT} problem and a simple \ac{OT} protocol that is secure against \emph{semi-honest} adversaries. The role of \ac{OT} in Yao's protocol is discussed in section \ref{sec:protocol}.
+While \ac{OT} and \ac{SFE} are approaches to distinct (though related) problems, understanding Yao's \ac{GCP} and its security properties requires some understanding of \ac{OT}. Its a cryptographic primitive and a building block that Yao's \ac{GCP} builds on.  This section provides a brief overview of the \ac{OT} problem and a simple \ac{OT} protocol that is secure against \emph{semi-honest} adversaries. The role of \ac{OT} in Yao's protocol is discussed in section \ref{sec:protocol}, and a more secure \ac{OT} protocol is included and explained in section \ref{sec:security}.
 
 \subsection{Problem Definition}
 
 A general form of \ac{OT} is \emph{1-out-of-N oblivious transfer}, a two party protocol where \ac{P1}, the sending party, has a collection of values. \ac{P2} is able to select one of the values from this set to receive, but is not able to learn any of the other values.
 
-More formally, a \emph{1-out-of-N oblivious transfer} protocol takes as inputs a set of values \emph{N} from \ac{P1}, and index \emph{i} from \ac{P2}, where
+More formally, a \emph{1-out-of-N oblivious transfer} protocol takes as inputs a set of values \emph{N} from \ac{P1}, and an index \emph{i} from \ac{P2}, where
 $0 \leq i < |N|$. The protocol then outputs nothing to \ac{P1}, and $N_i$ to \ac{P2} in a manner that prevents \ac{P2} from learning $N_j$ for all values of $j \neq i$.
 
 A special case of the above is the \emph{1-out-of-2 oblivious transfer} problem, where \emph{N} is fixed at 2.  Here \ac{P1} has just two values, and \ac{P2} is accordingly limited to $i \in \{0, 1\}$.  All versions of Yao's \ac{GCP} discussed in this paper rely on \emph{1-out-of-2 oblivious transfer} protocols.
@@ -29,7 +29,7 @@ The following protocol\cite{lindell2013technion} is a simple \emph{1-out-of-2 \a
         \STATE \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether she wishes to learn $s_0$ or $s_1$.
         \STATE \ac{P2} generates a public / private key pair $(k^{pub}, k^{pri})$, along with a second value $k^\bot$ that is indistinguishable from a public key, but for which \ac{P2} has no corresponding private key to decrypt with.
         \STATE \ac{P2} then advertises these values as public keys $(k^{pub}_0, k^{pub}_1)$ and sets $k^{pub}_i = k^{pub}$ and $k^{pub}_{i-1} = k^\bot$.
-        \STATE \ac{P1} generates $c_0 = E_{k^{pub}_0}(s_0)$ and $c_1 = E_{k^{pub}_1}(s_1)$ and sends $c_0$ and $c_1$ to \ac{P2}.
+        \STATE \ac{P1} generates $c_0 = E_{k^{pub}_0}(s_0)$ and $c_1 = E_{k^{pub}_1}(s_1)$, and sends $c_0$ and $c_1$ to \ac{P2}.
         \STATE \ac{P2} computes $s_i = D_{k^{pri}}(c_i)$.
     \end{algorithmic}
 \end{algorithm}

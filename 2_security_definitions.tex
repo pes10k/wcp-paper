@@ -1,10 +1,10 @@
 \section{Security Definitions}
 \label{sec:definitions}
 
-This section defines several security related terms that are used throughout the paper.  The terminology is not identical throughout the literature, but in most cases has simple mappings to equivalent terms.
+This section defines several security-related terms that are used throughout the paper.  The terminology is not identical throughout the literature, but in most cases has simple mappings to equivalent terms.
 
 
-\subsection{Properties of \ac{SFE}}
+\subsection{Required Properties of \ac{SFE} Protocol}
 
 Attempting to abstractly but precisely define the characteristics of a \ac{SFE} protocol is difficult and can quickly devolve into a long enumeration of characteristics a \ac{SFE} system should \emph{not} have.  Yao instead suggests\cite{yao1986generate} that a correct system should be compared to an ideal-oracle that fulfills three properties, and that a \ac{SFE} system is correct if it performs identically to this imagined ideal-oracle.
 
@@ -13,7 +13,7 @@ This imagined ideal-oracle takes \ac{f}, \ac{P1}'s input (\ponein) and \ac{P2}'s
 
 \subsubsection{Validity}
 
-A \ac{SFE} system must perform indistinguishably from an ideal-oracle in being able to correctly calculate the given function. Note that this does not guarantee a correct result, since the function being computed in a secure manner could itself contain a logic error, nor does it guarantee the production of any answer, since one party could submits an input outside the domain of the function. This \emph{validity} requirement merely requires that the secure version of the function produce the same result as the insecure (or ``pre-secured'') version of the function being evaluated, given the same inputs.
+A \ac{SFE} system must perform indistinguishably from an ideal-oracle in being able to correctly calculate the desired function. Note that this does not guarantee a correct result, since the function being securely computed could itself contain a logic error, nor does it guarantee the production of any answer, since one party could submit an input outside the domain of the function. This \emph{validity} requirement merely requires that the secure version of the function produce the same result as the insecure (or ``pre-secured'') version of the function being evaluated, given the same inputs.
 
 
 \subsubsection{Privacy}
@@ -26,26 +26,27 @@ This does not imply that \ac{SFE} cannot be used to protect the \emph{privacy} o
 
 \subsubsection{Fairness}
 
-Finally, a \ac{SFE} system must do as well as a ideal-oracle in preventing one party  from learning the function's result without sharing it with the other party. In order words, \ac{P1} should not be able to learn $u$, the output of \emph{f}, while denying it to \ac{P2}, nor vise-versa.
+Finally, a \ac{SFE} system must do as well as a ideal-oracle in preventing one party  from learning the function's result without sharing it with the other party. In order words, \ac{P1} should not be able to learn $u$ while denying it to \ac{P2}, nor vise-versa.
 
 \subsection{Adversary Models}
 
-In addition to defining the properties a \ac{SFE} should have, its necessary to define under which conditions those properties must hold.  While the relevant literature contains many different terms for an adversary's willingness to deviate from the protocol, and many gradations between 100\% honest and 100\% malicious, this paper generalizes the types of attackers into two categories, at the extremes of the attacker spectrum.
+In addition to defining the properties a \ac{SFE} protocol should have, it is necessary to define under which conditions those properties must hold.  While the relevant literature contains a variety of terms for an adversary's willingness to deviate from the protocol, for different gradations between 100\% honest and 100\% dishonest, this paper generalizes the types of attackers into two categories, at the extremes of the attacker spectrum.
 
-A \ac{SFE} protocol is said to be secure against under a given adversary model if the \ac{SFE} protocol can provide the three above mentioned security properties against any party following the assumptions of the adversary model.
+A \ac{SFE} protocol is said to be secure under a given adversary model if the \ac{SFE} protocol can provide the three above mentioned security properties against any party following the assumptions of the adversary model.
+
 
 \subsubsection{Semi-Honest}
 
-A \emph{semi-honest} adversary is assumed to follow all required steps in a protocol, but will also look for all advantageous information leaked from the execution of the protocol, such as intermediate values, control flow decisions, or values derivable from the same\cite{goldreich1998secure}.  Additionally, \emph{semi-honest} adversaries are assumed to be selfish, in that they will take any steps that will benefit themselves if the benefit is greater than the harm, within the constraints imposed by the protocol.
+A \emph{semi-honest} adversary is assumed to follow all required steps in a protocol, but will look for all advantageous information leaked from the execution of the protocol, such as intermediate values, control flow decisions, or values derivable from the same\cite{goldreich1998secure}.  Additionally, \emph{semi-honest} adversaries are assumed to be selfish, in that they will take any steps that will benefit themselves if the benefit is greater than the harm, within the constraints imposed by the protocol.
 
 
 \subsubsection{Malicious}
 
-A \emph{malicious} adversary is assumed to arbitrarily deviate from the protocol at any point, and in any way that might benefit them\cite{goldreich1998secure}.  This includes proving deceptive or incorrect values, aborting a protocol at anytime, or otherwise taking any steps that could reach a desirable outcome.  This is the most difficult type of adversary to secure against; a system that is secure against \emph{malicious} adversaries is necessarily secure against \emph{semi-honest} adversaries.
+A \emph{malicious} adversary is assumed to arbitrarily deviate from the protocol at any point in any way that might benefit them\cite{goldreich1998secure}.  This includes proving deceptive or incorrect values, aborting a protocol at anytime, or otherwise taking any steps that could reach a desirable outcome.  This is the most difficult type of adversary to secure against; a system that is secure against \emph{malicious} adversaries is necessarily secure against \emph{semi-honest} adversaries.
 
 
 \subsection{Hash Functions}
 
-This paper makes the assumption that hash functions generally, or at least some existing efficient hash function, models a random oracle.  More formally, the paper assumes that a hash operation can be treated as a uniformly distributed mapping from $f(\{0, 1\}^{*}) \to \{0, 1\}^{h}$, where $h$ is the length of the produced message digest.  This assumption implies that there is no correlation between the output of a hash function and its input.  Put differently, the assumption implies that nothing can be learned about the input to a hash function by examining its output.
+This paper makes the assumption that hash functions generally, or at least some existing efficient hash function, model a random oracle.  More formally, the paper assumes that a hash operation can be treated as a uniformly distributed mapping from $f(\{0, 1\}^{*}) \to \{0, 1\}^{h}$, where $h$ is the length of the produced message digest.  This assumption implies that there is no correlation between the output of a hash function and its input.  Put differently, the assumption implies that nothing can be learned about the input to a hash function by examining its output.
 
-This assumption is a common one throughout the field and discussed research\cite{pinkas2009secure}.  Where work mentions alternate constructions or other caveats if this random oracle assumption does not hold, they are mentioned.
+This assumption is a common one throughout the field and discussed research\cite{pinkas2009secure}.  While some research mentions alternate constructions or other caveats if this random oracle assumption does not hold, these are are rarely the main assumption in the work, and thus are not discussed further in this paper.
