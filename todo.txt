@@ -1,9 +1,7 @@
 7. Diagrams of fast table lookups
 1. Better understand secure OT example (why xors?)
-- KDF function selection?
 
 
-8. Note that there is lots more work in optimizing the cut-and-choose strategy
 9. Explain how / that its possible to compose free XOR and GRR together
 5. Summary of security section, discussing comparison to original Yao promises
 6. Table explaining how free xor trick works
