@@ -1,7 +1,7 @@
 \section{Protocol Performance}
 \label{sec:performance}
 
-Yao's protocol gives a polynomial time solution for the \ac{SFE} problem, both in the \emph{semi-honest} and \emph{malicious} cases (once the adjustments discussed in section \ref{sec:security} are made).  However, while Yao's protocol is by this definition ``efficient'', it is also costly, and for many problems prohibitively so.  For example, Kreuter, shelat and Shen\cite{kreuter2012billion} found that computing the edit distance of two 4095-bit strings required a circuit of over 5.9 billion gates and several hours of time, even given with a highly optimized circuit.
+Yao's protocol gives a polynomial time solution for the \ac{SFE} problem, both in the \emph{semi-honest} and \emph{malicious} cases (once the adjustments discussed in section \ref{sec:security} are made).  However, while Yao's protocol is by this definition ``efficient'', it is also costly, and for many problems prohibitively so.  For example, Kreuter, shelat and Shen\cite{kreuter2012billion} found that computing the edit distance of two 4095-bit strings required a circuit of over 5.9 billion gates and several hours of time, even with a highly optimized circuit.
 
 A great deal of work has been done to make Yao's protocol less expensive to execute.  This work broadly falls into three categories: 1) communication optimizations that reduce the amount of information that must be shared between the two parties, 2) execution optimizations that that allow for the same number of gates to be executed in a shorter amount of time, and 3) circuit optimizations that reducing the number of gates needed to compute a function.
 
@@ -21,28 +21,28 @@ First, instead of having \ac{P1} assign values for each wire in the circuit rand
 
 Second, instead of sending \ac{P2} $m$ copies of the garbled circuit during the \emph{cut-and-check} phase, \ac{P1} instead sends \ac{P2} ``commitments'' for each version of the circuit.  \ac{P2} chooses the $m/2$ circuits for \ac{P1} to reveal.  Instead of sending complete versions of each garbled circuit to \ac{P2}, \ac{P1} sends the random seeds used for each selected circuit, along with any structural information \ac{P2} needs to generate the garbled circuit from the random seed. \ac{P2} can then generating the garbled circuit herself, using the random seed to duplicate the pseudo-random values \ac{P1} generated.
 
-Once \ac{P2} has verified that the revealed circuits are correct, she then checks that \ac{P1}'s commitments for each circuit are correct (loosely, by hashing each random-seed generated circuit and seeing if it matches the corresponding commitment).  Finally, \ac{P1} sends \ac{P2} the remaining $m/2$ circuits for \ac{P2}'s evaluation.
+Once \ac{P2} has reconstructed a version of the garbled circuit that she knows to be correct using the random seed, she then checks that \ac{P1}'s commitments for each circuit are correct (loosely, by hashing each random-seed generated circuit and seeing if it matches the corresponding commitment).  Finally, \ac{P1} sends \ac{P2} the remaining $m/2$ circuits for \ac{P2}'s evaluation.
 
 This technique reduces the communication overhead of the protocol by approximately $1/2$, since the commitments \ac{P1} sends are constant in size and much much smaller than the size of a circuit.
 
 
 \subsection{Execution Optimizations}
 
-Another area of optimization consists of techniques for reducing the number of resources, both in terms of time and computation power, needed to carry out Yao's protocol.  Optimizations in this section deal with how a two parties can securely evaluate a garbled more efficiently without needing to alter the structure of the circuit.
+Another area of optimization consists of techniques for reducing the number of resources, both in terms of time and computation power, needed to evaluate one or more garbled circuits.  Optimizations in this section deal with how two parties can securely evaluate a garbled circuit more efficiently \emph{without} needing to alter the structure of the circuit.
 
 
 \subsubsection{Fast Table Lookups}
 
 The \emph{fast table lookups}\footnote{This name for the technique comes from\cite{huang2011faster}, though versions of it are in work at least as early as\cite{malkhi2004fairplay}.} technique speeds up \ac{P2}'s evaluation of a circuit by removing the need for \ac{P2} to attempt to decrypt each row of each gate's garbled truth table until she finds a value that decrypts correctly.  Instead, the circuit constructor adds an additional bit to the end of each garbled output value. This additional bit serves as half of an index into the next gate's garbled truth table. Since each each garbled truth table contains four rows, and each gate has two input wires (each with one index bit), combining the index bits from both input values can uniquely identify which of the four rows in the gate's garbled truth table the input values decrypt.
 
-Note that since the order of the rows each garbled truth table is randomized during construction, these index values do not reveal any information about the underlying values, and thus do not affect the security of the the system.
+Note that since the order of the rows in each garbled truth table is randomized during construction, these index values do not reveal any information about the underlying values, and thus do not affect the security of the the system.
 
-Further note that the approach described above is functionally equivalent to the method described in\cite{malkhi2004fairplay}, but just described from opposite direction.  Milkhi et al. decide the order of the entries in the garbled truth table based on the assigned index bits on each input value.  The above description achieves the same outcome in reverse by randomly ordering the garbled truth table and then assigning the correct index bits to the values of the input strings\footnote{The latter approach was used because it seems easier to explain, given the need to describe the standard protocol first in section \ref{sec:protocol}.}.
+Further note that the approach described above is functionally equivalent to the method described in\cite{malkhi2004fairplay}, but just described from opposite direction.  Milkhi et al. decide the order of the entries in the garbled truth table based on the assigned index bits on each input value.  The above description achieves the same outcome in reverse by randomly ordering the garbled truth table and then assigning the correct index bits to the values of the input strings\footnote{The latter approach was used because it lends itself better as an addition to the standard protocol, while the \cite{malkhi2004fairplay} description requires working into the initial construction of the protocol.}.
 
 \subsubsection{Pipelined Circuit Execution}
 \label{sec:piplinedexecution}
 
-Garbled representations of circuits computing even simple functions can grow extremely large, making them difficult to store in memory for both the generating and computing party, as well as time consuming to securely evaluate (since \ac{P2} waits idle in the protocol while \ac{P1} garbles the circuit).  Huang, Evans, et al.\cite{huang2011faster} realized that the garbling and executing processes could be partially parallelized, with \ac{P1} sending \ac{P2} the garbled gates as quickly as he is able to prepare them, and \ac{P2} continuing to compute as long as she has holds at least one gate for which she has inputs for.
+Garbled circuits for even simple functions can grow extremely large, making them difficult to store in memory for both the generating and computing party, as well as time consuming to securely evaluate (since \ac{P2} waits idle in the protocol while \ac{P1} garbles the circuit).  Huang, Evans, et al.\cite{huang2011faster} realized that the garbling and executing processes could be partially parallelized, with \ac{P1} sending \ac{P2} the garbled gates as quickly as he is able to prepare them, and \ac{P2} continuing to compute as long as she has holds at least one gate for which she has inputs for.
 
 This technique has two benefits.  First, it prevents either party from needing to keep an entire circuit in memory (though the optimal strategy for minimizing what subset of the circuit must be kept in memory is an open problem\cite{kreuter2012billion}), and second, it roughly reduces the time needed to compute a garbled circuit from $t_{garble} + t_{OT} + t_{evaluate}$ to\\ $max(t_{garble}, t_{evaluate}) + t_{OT}$.
 

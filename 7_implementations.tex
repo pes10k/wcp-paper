@@ -21,7 +21,7 @@ This approach focused on the \emph{semi-honest} scenario, and thus made the trad
 
 The system was compared against previously best known privacy preserving methods for computing Hamming distance, Levenshtein distance, Smith-Waterman genome alignment and AES, and found an order of magnitude improvement in their system (though it is not discussed if the compared to approaches are secure in the \emph{malicious} case or similarly just in the \emph{semi-honest} case). The largest circuit computed consisted of over 1 billion gates, for the Levenshtein distance problem.
 
-
+\pagebreak
 \subsection{Kreuter, shelat, Shen}
 
 Most recently, Kreuter et al.\cite{kreuter2012billion} presented a system for carrying out Yao's protocol in the \emph{malicious} case.  Similar to the previously discussed methods, this system includes a way of converting from a high level representation of a function into a boolean circuit.  Here the high level language was created by the authors.  The compiler is also specifically compared to the \emph{Fairplay} complier.  The authors find that their boolean circuit compiler is able to generate dramatically larger circuits using fewer computational resources than previous efforts.
