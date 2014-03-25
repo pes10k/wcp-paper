@@ -53,6 +53,7 @@ Two different general strategies for achieving this assurance have been promoted
 This zero-knowledge strategy dates back to earlier in this history of Yao's protocol, when the protocol was treated as proof that \ac{SFE} was possible, instead of as a practical tool for actually achieving \ac{SFE}. More recent, implementation-focused work on Yao's protocol has treated the zero-knowledge proof approaches as too expensive for practical use\cite{lindell2007efficient, mohassel2006efficiency, malkhi2004fairplay}.
 
 \subsubsection{Cut-and-Choose}
+\label{sec:cutchoosesimple}
 
 Instead, recent work on Yao's protocol has focused on a \emph{cut-and-choose} strategy for securing circuit construction\cite{malkhi2004fairplay}. Work on this approach has developed in an arms-race fashion, with proposals being made, other researchers revealing shortcomings in the given strategy, and a new strategy being developed to address the given short coming. Several rounds of this propose-attack-revise cycle are discussed below, to give context and meaning to each proposed improvement.\\[.5em]
 
@@ -123,6 +124,7 @@ Lindell and Pinkas's\cite{lindell2007efficient} solution of requiring that \ac{P
 
 
 \subsection{Securing Against Corrupt Inputs}
+\label{sub:inputattacks}
 
 A third area where a malicious party can exploit the original construction of Yao's protocol is in the values \ac{P1} chooses to return to \ac{P2} in the \emph{1-out-of-2 \ac{OT}} step.  Recall that this \ac{OT} step is taken to prevent \ac{P1} from learning whether \ac{P2} is requesting the garbled value for a 0 or a 1 bit in her input.  The protections given in the previous two subsections provide no security against this attack. Subsection \ref{sec:securingot} only addresses ensuring that \ac{P1} cannot learn \ac{P2}'s inputs during the \ac{OT} step, not that these inputs cannot be leaked elsewhere in the protocol.  Similarly, subsection \ref{sec:securingcircuits} provides \ac{P2} guarantees that the circuits being evaluated are not corrupt, but provides no guarantees against corrupt inputs.
 
