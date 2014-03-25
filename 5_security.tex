@@ -33,13 +33,12 @@ As previously discussed, \ac{OT} is a distinct, though related, field to both \a
     \end{algorithmic}
 \end{algorithm}
 
-The purpose of many of the steps in the protocol are not explicit in the original work\cite{bellare1990non}, so some context is added here.  Specifically, in step 5 \ac{P1} checks that $\beta_0 \bullet \beta_1 = C$ to prevent \ac{P2} from being able to decrypt under both $\beta_0$ and $\beta_1$, to force \ac{P2} to choose one or the other. As long as the assumption that \ac{P2} does not know the discrete log of $C$ holds, then it follows that \ac{P2} cannot know the discrete log of both $\beta_0$ and $\beta_1$.
+The purpose of many of the steps in the protocol are not explicit in the original work\cite{bellare1990non}, so some explanation is provided below.  Specifically, in step 5 \ac{P1} checks that $\beta_0 \bullet \beta_1 = C$ to prevent \ac{P2} from being able to decrypt under both $\beta_0$ and $\beta_1$, to force \ac{P2} to choose one or the other. As long as the assumption that \ac{P2} does not know the discrete log of $C$ holds, then it follows that \ac{P2} cannot know the discrete log of both $\beta_0$ and $\beta_1$.
 
-% Similarly, steps 7, 8 and 9 function similarly to a Diffie-Hellman key exchange.  In step 8, it will either be the case that $z_0 = \beta^{y_0}_0
-%  = g^{{x_i}^{y_0}} = g^{x_i \bullet y_0}$ or $z_1 = \beta^{y_1}_1
-%  = g^{{x_i}^{y_1}} = g^{x_i \bullet y_1}$, depending on \ac{P2}'s choice for $i$. This allows \ac{P2} to generate either
+Steps 7, 8 and 9 function similarly to a Diffie-Hellman key exchange.  However, in step 9 it may not be immediately obvious why \ac{P2} is able to reconstruct $z_i$ to decrypt $r_i$ and receive $s_i$.  To understand why, recall that $a_i$ is equal to $g^{y_i}$, making $a^{y_i}_i = g^{y^{x_i}_i} = g^{y_i \bullet x_i}$.
 
-% in steps 7 and 8, note that either $a_0$ or $a_1$ will be equal to the \ac{P2} selected $\beta_i$.
+Similarly , recall that $z_i$ was generated from $B^{y_i}_i$ and that $B_i = g^{x_i}$.  This makes $B^{y_i}_i = g^{x^{y_i}_i} = g^{x_i \bullet y_i}$.  Since \ac{P2} is able to construct the same pad \ac{P1} used to mask $s_i$, \ac{P2} can undo the mask and receive $s_i$.
+
 
 \subsection{Securing Circuit Construction}
 \label{sec:securingcircuits}
