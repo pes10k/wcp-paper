@@ -48,4 +48,4 @@ A \emph{malicious} adversary is assumed to arbitrarily deviate from the protocol
 
 This paper is written with the assumption that has functions, or at least some efficient hash function, models a random oracle, or that the hash function can be treated as a random mapping from $f(\{0, 1\}^{*}) \to \{0, 1\}^{h}$, where $h$ is the length of the produced message digest.  This assumption implies that there is no correlation between the output of a hash function and its input.  Or, put differently, that nothing can be learned about the input to a hash function by examining its output.
 
-This assumption mirrors one made throughout the discussed research.  Where work mentions alternate constructions or other caveats if this random oracle assumption does not hold, they are mentioned.
+This assumption is a common one throughout the field and discussed research\cite{pinkas2009secure}.  Where work mentions alternate constructions or other caveats if this random oracle assumption does not hold, they are mentioned.
