@@ -14,7 +14,7 @@ The protocol is presented twice, once in a less formal format that includes expl
         \STATE \ac{P1} transforms $c_c$ by garbling each gate's computation table, creating garbled circuit $c_g$.
         \STATE \ac{P1} sends both $c_g$ and the values for the input wires in $c_g$ corresponding to $i_{P1}$ to \ac{P2}.
         \STATE \ac{P2} uses \emph{1-out-of-2 \ac{OT}} to receive from \ac{P1} the garbled values for $i_{P2}$ to $c_g$.
-        \STATE \ac{P2} calculates $c_g$ with the encrypted versions of $i_{P1}$ and $i_{P2}$ and outputs the result.
+        \STATE \ac{P2} calculates $c_g$ with the ungarbled versions of $i_{P1}$ and $i_{P2}$ and outputs the result.
     \end{algorithmic}
 \end{algorithm}
 
@@ -35,9 +35,9 @@ Once \ac{P2} has received all of the strings corresponding to her input into the
 
 \ac{P2} then begins to compute the circuit by entering the pseudo-random strings that correspond to each bit of her and \ac{P1}'s input into each corresponding input gate and using the resulting string as the input to the next gate. \ac{P2} may try to learn information about \ac{P1}'s inputs by watching the execution of the circuit. The protocol prevents \ac{P2} from doing so though the manner that each computation table for each gate was constructed.
 
-Recall that the computation table for every gate in the circuit was constructed so that each pair of inputs produces a output string that represents the correct boolean result, but which appears pseudo-random to \ac{P2}.  In other words, instead of mapping from $\{0, 1\} \times \{0, 1\} \to \{0, 1\}$, all gates in the circuit become a function mapping two random looking strings to another uniformly distributed pseudo-random string, or $f(\{0, 1\}^{|k|}, \{0, 1\}^{|k|}) \to \{0, 1\}^{|k|}$, where $|k|$ is the key size of the of the encryption function. Since \ac{P2} never learns the mapping between strings used in the table and their underlying boolean values, \ac{P2} learns nothing by watching the outputs of each gate.
+Recall that the computation table for every gate in the circuit was constructed so that each pair of inputs produces a output string that represents the correct boolean result, but which appears pseudo-random to \ac{P2}.  In other words, instead of mapping from $\{0, 1\} \times \{0, 1\} \to \{0, 1\}$, all gates in the circuit become a function mapping two random looking strings to another uniformly distributed pseudo-random string, or $f(\{0, 1\}^{|k|}, \{0, 1\}^{|k|}) \to \{0, 1\}^{|k|}$, where $|k|$ is the size of the value returned by the hash function. Since \ac{P2} never learns the mapping between strings used in the table and their underlying boolean values, \ac{P2} learns nothing by watching the outputs of each gate.
 
-Recall that the output values of the output gates in the circuit are not masked. This results in \ac{P2} learning the value of $f(i_{P1}, i_{P2})$ once the computation has finished.  \ac{P2} then shares this computed value with \ac{P1}.
+Recall that the output values of the output gates in the circuit are not obscured. This results in \ac{P2} learning the value of $f(i_{P1}, i_{P2})$ once the computation has finished.  \ac{P2} then shares this computed value with \ac{P1}.
 
 
 \subsection{Detailed Description of the Protocol}
@@ -79,15 +79,15 @@ Once \ac{P1} has constructed the boolean circuit representation $c$ of $f$, the 
     \subfloat[Garbled Values]{
         \begin{tabular}{ c | c || c || c }
             \hline
-            $w_0$ & $w_1$ & $w_2$ & output value \\
+            $w_0$ & $w_1$ & $w_2$ & garbled value \\
             \hline
-            $k^0_0$ & $k^0_1$ & $k^0_2$ & $E_{k^0_0}(E_{k^0_1}(k^0_2, g_1))$\\
+            $k^0_0$ & $k^0_1$ & $k^0_2$ & $H(k^0_0 || k^0_1 || g_1) \oplus k^0_2$\\
             \hline
-            $k^0_0$ & $k^1_1$ & $k^1_2$ & $E_{k^0_0}(E_{k^1_1}(k^1_2, g_1))$\\
+            $k^0_0$ & $k^1_1$ & $k^1_2$ & $H(k^0_0 || k^1_1 || g_1) \oplus k^1_2$\\
             \hline
-            $k^1_0$ & $k^0_1$ & $k^1_2$ & $E_{k^1_0}(E_{k^0_1}(k^1_2, g_1))$\\
+            $k^1_0$ & $k^0_1$ & $k^1_2$ & $H(k^1_0 || k^0_1 || g_1) \oplus k^1_2$\\
             \hline
-            $k^1_0$ & $k^1_1$ & $k^1_2$ & $E_{k^1_0}(E_{k^1_1}(k^1_2, g_1))$\\
+            $k^1_0$ & $k^1_1$ & $k^1_2$ & $H(k^1_0 || k^1_1 || g_1) \oplus k^1_2$\\
             \hline
         \end{tabular}
         \label{fig:gategarblepost}
@@ -120,15 +120,15 @@ Once \ac{P1} has constructed the boolean circuit representation $c$ of $f$, the 
     \subfloat[Garbled Values]{
         \begin{tabular}{ c | c || c || c }
             \hline
-            $w_3$ & $w_4$ & $w_5$ & output value \\
+            $w_3$ & $w_4$ & $w_5$ & garbled value \\
             \hline
-            $k^0_3$ & $k^0_4$ & $k^0_5$ & $E_{k^0_3}(E_{k^0_4}(k^0_5, g_2))$\\
+            $k^0_3$ & $k^0_4$ & $k^0_5$ & $H(k^0_3 || k^0_4 || g_2) \oplus k^0_5$\\
             \hline
-            $k^0_3$ & $k^1_4$ & $k^0_5$ & $E_{k^0_3}(E_{k^1_4}(k^0_5, g_2))$\\
+            $k^0_3$ & $k^1_4$ & $k^0_5$ & $H(k^0_3 || k^1_4 || g_2) \oplus k^0_5$\\
             \hline
-            $k^1_3$ & $k^0_4$ & $k^0_5$ & $E_{k^1_3}(E_{k^0_4}(k^0_5, g_2))$\\
+            $k^1_3$ & $k^0_4$ & $k^0_5$ & $H(k^1_3 || k^0_4 || g_2) \oplus k^0_5$\\
             \hline
-            $k^1_3$ & $k^1_4$ & $k^1_5$ & $E_{k^1_3}(E_{k^1_4}(k^1_5, g_2))$\\
+            $k^1_3$ & $k^1_4$ & $k^1_5$ & $H(k^1_3 || k^1_4 || g_2) \oplus k^1_5$\\
             \hline
         \end{tabular}
         \label{fig:andgatepost}
@@ -155,15 +155,15 @@ Once \ac{P1} has constructed the boolean circuit representation $c$ of $f$, the 
     \subfloat[Garbled Values]{
         \begin{tabular}{ c | c || c || c }
             \hline
-            $w_2$ & $w_5$ & $w_6$ & output value \\
+            $w_2$ & $w_5$ & $w_6$ & garbled value \\
             \hline
-            $k^0_2$ & $k^0_5$ & $k^0_6$ & $E_{k^0_2}(E_{k^0_5}(k^0_6, g_3))$\\
+            $k^0_2$ & $k^0_5$ & $k^0_6$ & $H(k^0_2 || k^0_5 || g_3) \oplus k^0_6$\\
             \hline
-            $k^0_2$ & $k^1_5$ & $k^1_6$ & $E_{k^0_2}(E_{k^1_5}(k^1_6, g_3))$\\
+            $k^0_2$ & $k^1_5$ & $k^1_6$ & $H(k^0_2 || k^1_5 || g_3) \oplus k^1_6$\\
             \hline
-            $k^1_2$ & $k^0_5$ & $k^1_6$ & $E_{k^1_2}(E_{k^0_5}(k^1_6, g_3))$\\
+            $k^1_2$ & $k^0_5$ & $k^1_6$ & $H(k^1_2 || k^0_5 || g_3) \oplus k^1_6$\\
             \hline
-            $k^1_2$ & $k^1_5$ & $k^0_6$ & $E_{k^1_2}(E_{k^1_5}(k^0_6, g_3))$\\
+            $k^1_2$ & $k^1_5$ & $k^0_6$ & $H(k^1_2 || k^1_5 || g_3) \oplus k^0_6$\\
             \hline
         \end{tabular}
         \label{fig:xorgatepost}
@@ -172,13 +172,13 @@ Once \ac{P1} has constructed the boolean circuit representation $c$ of $f$, the 
     \label{fig:xorgate}
 \end{figure}
 
-To see how \ac{P1} does, this first, consider a single logical OR gate, $g^{OR}_1$, represented in figure \ref{fig:garblegate}. Initially \ac{P1} generates the values for this gate as normal, resulting in the truth table in figure \ref{fig:gategarblepre}. \ac{P1} then generates a key for each possible value for each wire in the gate.  This results in 6 keys being generated, for each of the two possible boolean values on each of the three wires in the gate.
+To see how \ac{P1} does, this first, consider a single logical OR gate, $g^{OR}_1$, represented in figure \ref{fig:garblegateimg}. Initially \ac{P1} generates the values for this gate as normal, resulting in the truth table in figure \ref{fig:gategarblepre}. \ac{P1} then generates a key for each possible value for each wire in the gate.  This results in 6 keys being generated, for each of the two possible boolean values on each of the three wires in the gate.
 
-\ac{P1} then encrypts each entry in the table for the output wire under the keys used for the corresponding inputs.  The gate identifier serves as a nonce and is only included in this construction to to ensure that the same values are never encrypted twice in the circuit.
+\ac{P1} then encrypts each entry in the table for the output wire using the keys used for the corresponding inputs.  The gate identifier serves as a nonce and is only included in this construction to to ensure that the same values are never encrypts twice in the circuit.
 
-This encryption plays two important roles in the protocol.  First, since the output of each encryption is assumed be random (i.e. the encryption function is assumed to perform like a random oracle), it removes any correlation between the underlying truth values in the table and the resulting garbled values. Even though this gate produces 3 identical boolean values, the garbled values all independently distributed, revealing nothing about the underlying value being masked.
+This encryption plays two important roles in the protocol.  First, since the output of each encryption operation is assumed be random (i.e. the hash function is assumed to perform like a random oracle), it removes any correlation between the underlying truth values in the table and the resulting garbled values. Even though this gate produces 3 identical boolean values, the garbled values all independently distributed, revealing nothing about the underlying value being encrypted.
 
-Second, encrypting the output keys under the input keys prevents \ac{P2}, the circuit evaluator, from playing with the circuit and considering other inputs other than those provided by \ac{P1}. \ac{P2} can only obtain one of the output keys from the table, since she will only have, at most, the necessary input keys to the gate to decrypt one value for the output wire.
+Second, encryption the output keys under the input keys prevents \ac{P2}, the circuit evaluator, from playing with the circuit and considering other inputs other than those provided by \ac{P1}. \ac{P2} can only obtain one of the output keys from the table, since she will only have, at most, the necessary input keys to the gate to decrypt one value for the output wire.
 
 Once \ac{P1} has garbled the values for one gate, he can continue the process to compose an arbitrarily large circuit.  Figure \ref{fig:xorgate} shows how multiple garbled gates can be composed together into a simple circuit, and the how the keys from each gate are carried forward into the next gate, blinding the computing party from the learning the intermediate values being calculated.
 

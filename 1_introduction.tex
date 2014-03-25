@@ -7,7 +7,7 @@ Many solutions have been developed for \ac{SFE}. One category of solution is fun
 
 Another category of approach is more general, and seeks to provide a general solution for \ac{SFE} by transforming arbitrary functions into secure functions. Approaches in this category include homomorphic encryption systems\cite{gentry2009fully} which allow for arbitrary execution on encrypted data.  Yao's \emph{garbled circuits} protocol fits in this second category.
 
-Yao's \ac{GCP} transforms any function into a function that can be evaluated securely by modeling the function as a boolean circuit, and then encrypting the inputs and outputs of each gate so that the party executing the function cannot discern any information about the inputs or intermediate values of the function. The protocol is secure as long as both parties follow the protocol. A full description of the protocol and the related security definitions are provided later in this paper.
+Yao's \ac{GCP} transforms any function into a function that can be evaluated securely by modeling the function as a boolean circuit, and then masking the inputs and outputs of each gate so that the party executing the function cannot discern any information about the inputs or intermediate values of the function. The protocol is secure as long as both parties follow the protocol. A full description of the protocol and the related security definitions are provided later in this paper.
 
 \subsection{History of Protocol}
 
