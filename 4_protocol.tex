@@ -46,7 +46,7 @@ This section provides a more precise explanation of each step of Yao's protocol,
 
 \subsubsection{Generating A Boolean Circuit Representation of the Function}
 
-Before it can be securely evaluated, the function \emph{f} must be converted into an equivalent boolean circuit $c$ so that $\forall x, y \in \{f(x, y) = c(x, y)\}$. The strategies for optimally doing so may be function specific, and are beyond the scope of the protocol.  For the purposes of this paper though, it is sufficient to note that there exists a mapping from any polynomial time function with fixed sized inputs to a boolean circuit that calculates the same output\cite{goldreich1987play}.
+Before it can be securely evaluated, the function \emph{f} must be converted into an equivalent boolean circuit $c$ so that $\forall x, y \rightarrow f(x, y) = c(x, y)$. The strategies for optimally doing so may be function specific, and are beyond the scope of the protocol.  For the purposes of this paper though, it is sufficient to note that there exists a mapping from any polynomial time function with fixed sized inputs to a boolean circuit that calculates the same output\cite{goldreich1987play}.
 
 
 \subsubsection{Garbling Truth Tables}

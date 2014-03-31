@@ -4,7 +4,7 @@
 This section defines several security-related terms that are used throughout the paper.  The terminology is not identical throughout the literature, but in most cases has simple mappings to equivalent terms.
 
 
-\subsection{Required Properties of \ac{SFE} Protocol}
+\subsection{Required Properties for \ac{SFE} Protocols}
 
 Attempting to abstractly but precisely define the characteristics of a \ac{SFE} protocol is difficult and can quickly devolve into a long enumeration of characteristics a \ac{SFE} system should \emph{not} have.  Yao instead suggests\cite{yao1986generate} that a correct system should be compared to an ideal-oracle that fulfills three properties, and that a \ac{SFE} system is correct if it performs identically to this imagined ideal-oracle.
 
@@ -45,7 +45,7 @@ A \emph{semi-honest} adversary is assumed to follow all required steps in a prot
 A \emph{malicious} adversary is assumed to arbitrarily deviate from the protocol at any point in any way that might benefit them\cite{goldreich1998secure}.  This includes proving deceptive or incorrect values, aborting a protocol at anytime, or otherwise taking any steps that could reach a desirable outcome.  This is the most difficult type of adversary to secure against; a system that is secure against \emph{malicious} adversaries is necessarily secure against \emph{semi-honest} adversaries.
 
 
-\subsection{Hash Functions}
+\subsection{Hash Function Assumptions}
 
 This paper makes the assumption that hash functions generally, or at least some existing efficient hash function, model a random oracle.  More formally, the paper assumes that a hash operation can be treated as a uniformly distributed mapping from $f(\{0, 1\}^{*}) \to \{0, 1\}^{h}$, where $h$ is the length of the produced message digest.  This assumption implies that there is no correlation between the output of a hash function and its input.  Put differently, the assumption implies that nothing can be learned about the input to a hash function by examining its output.
 
