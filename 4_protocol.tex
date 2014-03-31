@@ -199,36 +199,4 @@ Once \ac{P1} has finished generating the garbled circuit, he then needs to garbl
 Once \ac{P2} has both garbled inputs and the garbled circuit, she can straight forwardly compute the circuit.  For each input gate, \ac{P2} looks up the corresponding value from \ac{P1} and \ac{P2}'s garbled input values and uses them as keys to decrypt the output value from the gate's garbled truth table.  Since \ac{P2} does not know which output key these two input keys correspond to, \ac{P2} must try to decrypt each of the four output keys.  If the protocol has been carried out correctly, only one of the four values will decrypt correctly.  The other three decryption attempts will produce $\bot$. The newly decrypted key then becomes an input key to the next gate.
 
 \ac{P2} continues this process until she reaches the output wires of the circuit.  Each of these wires output a single, unencrypted bit.  \ac{P2} then reassembles the output bits and has the correct solution for the \ac{f} encoded by $c_g$.  \ac{P2} completes the protocol by sending the output of the circuit to \ac{P1}.
-
-\begin{tabular}{ c | c || c || c }
-    \hline
-    $w_0$ & $w_1$ & $w_2$ & garbled value \\
-    \hline
-
-    \hline
-    $k^0_0$ & $k^1_1$ & $k^1_2$ & $H(k^0_0 || k^1_1 || g_1) \oplus k^1_2$\\
-    \hline
-    $k^1_0$ & $k^0_1$ & $k^1_2$ & $H(k^1_0 || k^0_1 || g_1) \oplus k^1_2$\\
-    \hline
-    $k^1_0$ & $k^1_1$ & $k^1_2$ & $H(k^1_0 || k^1_1 || g_1) \oplus k^1_2$\\
-    \hline
-\end{tabular}
-
-
-
-\begin{tabular}{ c | c || c || c }
-    \hline
-    $w_0$ & $w_1$ & $w_2$ & garbled value \\
-    \hline
-    $k^0_0$ & $k^0_1$ & $k^0_2$ & $E_{k^0_0}(E_{k^0_1}(k^0_2))$\\
-    \hline
-    $k^0_0$ & $k^1_1$ & $k^1_2$ & $E_{k^0_0}(E_{k^1_1}(k^1_2))$\\
-    \hline
-    $k^1_0$ & $k^0_1$ & $k^1_2$ & $E_{k^1_0}(E_{k^0_1}(k^1_2))$\\
-    \hline
-    $k^1_0$ & $k^1_1$ & $k^1_2$ & $E_{k^1_0}(E_{k^1_1}(k^1_2))$\\
-    \hline
-\end{tabular}
-
-
-$H(k^{b_{p_1}}_0 || k^{b_{p_2}}_0 || g_1) \oplus$
+1) \oplus$
