@@ -1,7 +1,7 @@
 \section{Protocol Performance}
 \label{sec:performance}
 
-Yao's protocol gives a polynomial time solution for the \ac{SFE} problem, both in the \emph{semi-honest} and \emph{malicious} cases (once the adjustments discussed in section \ref{sec:security} are made).  However, while Yao's protocol is by this definition ``efficient'', it is also costly, and for many problems prohibitively so.  For example, Kreuter, shelat and Shen\cite{kreuter2012billion} found that computing the edit distance of two 4095-bit strings required a circuit of over 5.9 billion gates and several hours of time, even with a highly optimized circuit.
+Yao's protocol gives a polynomial time solution for the \ac{SFE} problem, both in the \emph{semi-honest} and \emph{malicious} cases (once the adjustments discussed in section \ref{sec:security} are made).  However, while Yao's protocol is by this definition ``efficient'', it is also costly, and for many problems prohibitively so.  For example, Kreuter, Shelat and Shen\cite{kreuter2012billion} found that computing the edit distance of two 4095-bit strings required a circuit of over 5.9 billion gates and several hours of time, even with a highly optimized circuit.
 
 A great deal of work has been done to make Yao's protocol less expensive to execute.  This work broadly falls into three categories: 1) communication optimizations that reduce the amount of information that must be shared between the two parties, 2) execution optimizations that that allow for the same number of gates to be executed in a shorter amount of time, and 3) circuit optimizations that reducing the number of gates needed to compute a function.
 

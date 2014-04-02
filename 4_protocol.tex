@@ -98,7 +98,7 @@ Once \ac{P1} has constructed a boolean circuit representation $c$ of $f$, the ne
 \begin{figure}[t!]
     \centering
     \includegraphics[width=\columnwidth]{images/multi_gates}
-    \caption{Composing several gates into a Simple Circuit}
+    \caption{Composing several gates into a simple circuit}
     \label{fig:garblecircuitimg}
     \subfloat[Original Values]{
         \begin{tabular}{ c | c || c }
@@ -179,9 +179,9 @@ This encryption plays two important roles in the protocol.  First, since the out
 
 Second, encrypting the output keys under the input keys prevents \ac{P2}, the circuit evaluator, from playing with the circuit and considering other inputs other than those provided by \ac{P1}. \ac{P2} can only obtain one of the output keys from the table, since she will only have, at most, the necessary input keys to the gate to decrypt one value for the output wire.
 
-Once \ac{P1} has garbled the values for one gate, he can continue the process to compose an arbitrarily large circuit.  Figure \ref{fig:xorgate} shows how multiple garbled gates can be composed together into a simple circuit, and the how the keys from each gate are carried forward into the next gate, blinding the computing party from the learning the intermediate values being calculated.
+Once \ac{P1} has garbled the values for one gate, he can continue the process to compose an arbitrarily large circuit.  Figure \ref{fig:garblecircuitimg} shows how multiple garbled gates can be composed together into a simple circuit, and the how the keys from each gate are carried forward into the next gate, blinding the computing party from the learning the intermediate values being calculated.
 
-The only gates in the circuit that do not need to be garbled are the output gates, or gates who's wires do not serve as input wires to another gate.  The values from these gates can remain unobscured since they are outputting the final result of the circuit, a value which \ac{P2} is allowed to learn.
+The only gates in the circuit that do not need to be garbled are the output gates, or gates with wires that do not serve as input wires to another gate.  The output values from these gates can remain unobscured since they are outputting the final result of the circuit, a value which \ac{P2} is allowed to learn.
 
 
 \subsubsection{Sending Garbled Values to \ac{P2}}

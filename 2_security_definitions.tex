@@ -13,12 +13,12 @@ This imagined ideal-oracle takes \ac{f}, \ac{P1}'s input (\ponein) and \ac{P2}'s
 
 \subsubsection{Validity}
 
-A \ac{SFE} system must perform indistinguishably from an ideal-oracle in being able to correctly calculate the desired function. Note that this does not guarantee a correct result, since the function being securely computed could itself contain a logic error, nor does it guarantee the production of any answer, since one party could submit an input outside the domain of the function. This \emph{validity} requirement merely requires that the secure version of the function produce the same result as the insecure (or ``pre-secured'') version of the function being evaluated, given the same inputs.
+A \ac{SFE} system must perform indistinguishably from an ideal-oracle in being able to correctly compute the desired function. Note that this does not guarantee a correct result, since the function being securely computed could itself contain a logic error, nor does it guarantee the production of any answer, since one party could submit an input outside the domain of the function. This \emph{validity} requirement merely requires that the secure version of the function produce the same result as the insecure (or ``pre-secured'') version of the function being evaluated, given the same inputs.
 
 
 \subsubsection{Privacy}
 
-A \ac{SFE} system must also perform indistinguishably from an ideal-oracle in preventing preventing \ac{P2} from learning about \ponein, provided \ac{P1} follows the protocol.  The same must also hold for preventing \ac{P1} from learning about \ptwoin.
+A \ac{SFE} system must also perform indistinguishably from an ideal-oracle in preventing \ac{P2} from learning about \ponein, provided \ac{P1} follows the protocol.  The same must also hold for preventing \ac{P1} from learning about \ptwoin.
 
 Note that that this definition of \emph{privacy} does not guarantee that \ac{P1} is not able to learn \ac{P2}'s input by examining the function's result (if the function being executed allows for such reverse engineering).  If, for example, the function being evaluated securely is multiplication, the fact that \ac{P1} can learn \ptwoin\ through $u/i_{P1}$ does not violate this \emph{privacy} property; \ac{P1} could learn \ptwoin\ given an ideal-oracle too.
 

@@ -23,7 +23,7 @@ As previously discussed, \ac{OT} is a distinct, though related, field to both \a
         \STATE \ac{P1} (sender) and \ac{P2} (receiver) agree on some $q$ and $g$ such that $g$ is a generator for $\mathbb{Z}^*_q$.
         \STATE \ac{P1} selects a value  $C$ from $\mathbb{Z}^*_q$ such that \ac{P2} does not know the discrete log of $C$ in $\mathbb{Z}^*_q$.
         \STATE \ac{P2} selects $i \in \{0, 1\}$ corresponding to whether \ac{P2} wants $s_0$ or $s_1$. \ac{P2} also selects a random $0 \leq x_i \leq q-2$.
-        \STATE \ac{P2} sets $\beta_i = g^{x_i}$ and $\beta_{i-1} = C \bullet (g^{x_i})^{-1}$. $(\beta_0, \beta_1)$ and $(i, x_i)$ form \ac{P1} public and private keys, respectively.
+        \STATE \ac{P2} sets $\beta_i = g^{x_i}$ and $\beta_{i-1} = C \odot (g^{x_i})^{-1}$. $(\beta_0, \beta_1)$ and $(i, x_i)$ form \ac{P1} public and private keys, respectively.
 
         \STATE \ac{P1} checks the validity of \ac{P2}'s public keys by verifying that $\beta_0 \bullet \beta_1 = C$.  If not, \ac{P1} aborts.
 
